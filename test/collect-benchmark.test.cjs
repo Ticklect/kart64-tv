@@ -1,0 +1,3 @@
+const {test}=require('node:test');const a=require('node:assert/strict');const {selectTarget,parseValue}=require('../src/collect-benchmark.cjs');
+test('accepts only the local TV benchmark debug target',()=>{let good={url:'file:///index.html',title:'Kart64 TV Check',webSocketDebuggerUrl:'ws://127.0.0.1:40491/devtools/page/abc'};a.equal(selectTarget([good],40491),good.webSocketDebuggerUrl);a.throws(()=>selectTarget([{...good,webSocketDebuggerUrl:'ws://evil.example/devtools/page/a'}],40491));a.throws(()=>selectTarget([{...good,title:'Other'}],40491));});
+test('handles pending, successful and failed results',()=>{a.equal(parseValue('null'),null);a.deepEqual(parseValue('{"version":1}'),{version:1});a.throws(()=>parseValue('{"error":"failure"}'));});

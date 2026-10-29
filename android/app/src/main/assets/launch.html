@@ -1,0 +1,16 @@
+<!doctype html><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1"><title>Kart64 TV</title>
+<style>body{background:#123b74;color:#fff5d7;font:24px sans-serif;margin:8vh 8vw}h1{color:#ffdf43}button{font:inherit;background:#ffdf43;color:#09234a;padding:16px 28px;border:0}small{display:block;margin:25px 0;font-size:18px;line-height:1.6}</style>
+<h1>Kart64 TV</h1><p id="state">Checking this TV…</p><small id="details"></small><button id="play" hidden>Start game</button>
+<script>
+(async()=>{
+ let shared=false;try{shared=new WebAssembly.Memory({initial:1,maximum:2,shared:true}).buffer instanceof SharedArrayBuffer}catch(e){}
+ const canvas=document.createElement('canvas'),gl=!!canvas.getContext('webgl2');
+ const result={sharedWasm:shared,webgl2:gl,isolated:crossOriginIsolated,gamepads:typeof navigator.getGamepads==='function'};
+ fetch('../report',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(result)}).catch(()=>{});
+ document.getElementById('details').textContent='Shared memory: '+(shared?'available':'unavailable')+' · WebGL2: '+(gl?'available':'unavailable')+' · Browser gamepads: '+(result.gamepads?'API present, pairing untested':'unavailable');
+ if(!shared||!gl){document.getElementById('state').textContent='This device cannot run the current game runtime. Required browser features are unavailable.';return}
+ let installed=false;try{installed=(await fetch('../game/ready.json')).ok}catch(e){}
+ document.getElementById('state').textContent=installed?'Required browser features detected. Game performance still needs testing.':'Browser check passed. This build does not contain your game data.';
+ if(installed){const p=document.getElementById('play');p.hidden=false;p.onclick=()=>location.href='../game/index.html';p.focus()}
+})();
+</script>

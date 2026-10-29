@@ -1,0 +1,46 @@
+{
+  "source": "https://eddmann.com/kart64/",
+  "retrieved": "2026-10-29",
+  "files": [
+    {
+      "file": "index.html",
+      "size": 73559,
+      "sha256": "bea5c182884420c725920248898dc4ea211d93a2e80062367eed5123cee95e80"
+    },
+    {
+      "file": "Spaghettify.js",
+      "size": 277666,
+      "sha256": "d086371c413f0cf998866f0e1273c8dad4a17ba5275239b44adf84c737bac117"
+    },
+    {
+      "file": "Spaghettify.wasm",
+      "size": 8225338,
+      "sha256": "ea0fa9b613a2d65f2a8103e8cfa6edde083583b10cde89d2639a142fa37f7b44"
+    },
+    {
+      "file": "Spaghettify.data",
+      "size": 7967812,
+      "sha256": "b71780384d4cb8b14c78428e5a3c150de420890f802c75409d987fb27cd7b3f3"
+    },
+    {
+      "file": "spaghetti.o2r",
+      "size": 2706468,
+      "sha256": "d09a14f681d5d3cd2a75a57079a85a04b381d42f713a701bd1cb462969356403"
+    },
+    {
+      "file": "courses.json",
+      "size": 168,
+      "sha256": "69fdc6e7c9b0f69e957eb5806391db67ddfa06c8fbd6b26e316e979564b53af9"
+    },
+    {
+      "file": "courses/silverstone/silverstone-v1.9.o2r",
+      "size": 4279438,
+      "sha256": "a8037c36f8e8b1b2f43fdfd7ac41858ea6ece54e838d9ad85ad9071c11dad825"
+    },
+    {
+      "file": "apple-touch-icon.png",
+      "size": 21258,
+      "sha256": "35018c2de71213f291e05d1249491ad1699df9ddb1da51653e898eeeed32bd46"
+    }
+  ]
+}
