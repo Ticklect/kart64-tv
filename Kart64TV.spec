@@ -8,7 +8,7 @@ android_apk=Path(os.environ.get('KART64_ANDROID_APK',str(project/'assets'/'kart6
 pin=json.loads((project/'assets'/'android-runtime.json').read_text())
 with android_apk.open('rb') as source:
     if hashlib.file_digest(source,'sha256').hexdigest()!=pin['sha256']:raise ValueError('Rebuild the Android runtime or select the verified KART64_ANDROID_APK before packaging.')
-art=[(str(p),'assets') for p in (project/'assets').iterdir() if p.is_file() and p.suffix.lower() in ('.png','.ico','.json')]
+art=[(str(p),'assets') for p in (project/'assets').iterdir() if p.is_file() and p.name != 'kart64-master.png' and p.suffix.lower() in ('.png','.ico','.json')]
 a = Analysis(
     [str(project / 'studio.py')],
     pathex=[],
