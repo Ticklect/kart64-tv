@@ -367,7 +367,9 @@ def main():
         ctypes.windll.shell32.SetCurrentProcessExplicitAppUserModelID('Ticklect.Kart64TV')
     if sys.argv[1:]==['--self-test']:
         root=Path(__file__).resolve().parent
-        return 0 if all((root/'benchmark'/n).is_file() for n in ('index.html','run.js','benchmark.js')) and (root/'src'/'build-runtime.cjs').is_file() else 1
+        apk=root/'assets'/'kart64-android.apk'
+        pin=json.loads((root/'assets'/'android-runtime.json').read_text())
+        return 0 if all((root/'benchmark'/n).is_file() for n in ('index.html','run.js','benchmark.js')) and (root/'src'/'build-runtime.cjs').is_file() and apk.is_file() and apk.stat().st_size==pin['size'] else 1
     if sys.argv[1:]==['--smoke-test']:
         app=QApplication(sys.argv);window=Studio(start_scan=False);window.show();app.processEvents()
         window.set_devices([{'ip':'10.0.0.2','brand':'Samsung','name':'Test TV','model':'Test model','supported':True}]);window.set_game('test.z64');window.navigate(1);app.processEvents()

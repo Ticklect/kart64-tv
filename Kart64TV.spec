@@ -5,6 +5,8 @@ import PySide6,os,json,hashlib
 project = Path(SPECPATH)
 qt = Path(PySide6.__file__).resolve().parent
 android_apk=Path(os.environ.get('KART64_ANDROID_APK',str(project/'assets'/'kart64-android.apk')))
+if android_apk.name.lower() != 'kart64-android.apk':
+    raise ValueError('The Android launcher input must be named kart64-android.apk so the bundled install path matches.')
 pin=json.loads((project/'assets'/'android-runtime.json').read_text())
 with android_apk.open('rb') as source:
     if hashlib.file_digest(source,'sha256').hexdigest()!=pin['sha256']:raise ValueError('Rebuild the Android runtime or select the verified KART64_ANDROID_APK before packaging.')
