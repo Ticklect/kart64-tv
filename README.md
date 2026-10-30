@@ -4,6 +4,8 @@
 
 **[Download for Windows](https://github.com/Ticklect/kart64-tv/releases/download/v0.1.4/Kart64TV-0.1.4-Windows-x64.exe)** · [Release notes](https://github.com/Ticklect/kart64-tv/releases/tag/v0.1.4)
 
+[Android / Google TV / Fire OS APK](https://github.com/Ticklect/kart64-tv/releases/latest/download/Kart64TV-Android-TV.apk) — experimental; the Windows app is still needed to transfer your game files.
+
 ![Kart64 TV installer](docs/screenshot.png)
 
 I started this to get Mario Kart 64 running directly on my Samsung TV. It worked, so I'm turning the setup into something other people can use.
