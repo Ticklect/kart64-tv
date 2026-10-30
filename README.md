@@ -19,6 +19,8 @@ The desktop app finds TVs, prepares your game files locally, installs the TV app
 
 This is an early prototype. TV model and operating system matter. Roku, VIDAA and Vega OS aren't supported yet.
 
+Startup on the tested Samsung still takes several minutes. Making that faster is the current priority; see [boot notes](docs/STARTUP.md).
+
 ### Try it
 
 On Windows, install Python 3.12+, then run:
