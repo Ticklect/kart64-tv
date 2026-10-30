@@ -1,9 +1,9 @@
-Windows download for the existing Kart64 TV app. Download **Kart64TV-0.1.4-Windows-x64.exe** and open it; Python and the app's artwork are bundled. No PC installer is required.
+Play Mario Kart 64 directly on your TV. This Windows app finds your TV, prepares your own game files and installs the TV app. No Python installation needed.
 
-Select your TV and supply your own supported US Mario Kart 64 ROM or compatible `.o2r` archive. Internet access is needed for verified tool/runtime downloads. Samsung still requires TV Developer Mode and its normal certificate authorization. No game files or private signing keys are included.
+**Faster boot:** our Samsung tests went from roughly **4½ minutes to 2–3 minutes**. We removed unnecessary loading, repeated database reads and extra file copies. The latest additional improvements are PC-tested; new TV timings are pending.
 
-Samsung gameplay was tested on UE50U8000FKXXU with an Xbox controller. LG webOS, Android/Google TV and Fire OS installation are experimental and need their platform-specific developer tools/pairing. Roku, VIDAA and Vega OS are not supported.
+**Support:** Samsung tested with an Xbox controller. LG, Android/Google TV and Fire OS are experimental. Developer Mode or pairing is required.
 
-The 0.1.4 startup changes pass PC boot/save/reload tests; new TV timings are pending. Existing recorded TV timings are for 0.1.3. This is an unsigned Windows preview.
+**[Download Version 1 for Windows](https://github.com/Ticklect/kart64-tv/releases/download/v0.1.4/Kart64TV-0.1.4-Windows-x64.exe)** — bring your own supported US ROM or `.o2r`. No game files included.
 
-**Third-party software:** the EXE includes Qt/PySide6 under LGPLv3, Python, the PyInstaller bootloader and an experimental Android launcher using Mozilla GeckoView. Full notices, corresponding Qt/PySide source archives, and source/rebuilding instructions are in **Kart64TV-0.1.4-DependencySources.zip**. Application source is available at this release tag. See **SHA256SUMS.txt** to verify downloads.
+Built on Kart64/SpaghettiKart. Includes Qt/PySide6 (LGPLv3), Python and GeckoView. [Licenses and dependency sources](https://github.com/Ticklect/kart64-tv/releases/download/v0.1.4/Kart64TV-0.1.4-DependencySources.zip) · [Credits and rebuild instructions](https://github.com/Ticklect/kart64-tv/blob/v0.1.4/packaging/SOURCES.md).
