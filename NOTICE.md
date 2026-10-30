@@ -5,3 +5,5 @@ Kart64 (Edd Mann), SpaghettiKart (Harbour Masters), their game decompilation sou
 The Android project depends on Mozilla GeckoView and NanoHTTPD. Python builds use PySide6/Qt; Windows packaging uses PyInstaller. Those dependencies retain their own licenses. Review their notices and redistribution requirements when creating binary releases.
 
 No ROMs, extracted game assets, certificates or private signing keys are included.
+
+Windows binary releases include the dependency notices and provide corresponding Qt/PySide source archives. See packaging/SOURCES.md for versions, source locations and instructions for rebuilding with modified LGPL libraries.

@@ -18,6 +18,6 @@ Brands are not operating systems. Sony, TCL, Hisense and Philips examples apply 
 
 ## Build
 
-Requires JDK 21, Gradle 9.5.1, Android SDK platform 37 and installed Android build tools. From the repository folder run `gradle -p android assembleDebug`. Dependencies are downloaded from Google, Maven Central and Mozilla's Maven repository. The current prototype is a debug-signed app because provisioning uses ADB `run-as`; it is not a Play Store release build.
+Requires JDK 21, Gradle 9.7.1, Android SDK platform 37 and installed Android build tools. From the repository folder run `gradle -p android assembleDebug`. Dependencies are downloaded from Google, Maven Central and Mozilla's Maven repository. The current prototype is a debug-signed app because provisioning uses ADB `run-as`; it is not a Play Store release build.
 
 After a verified build, copy the APK to `assets/kart64-android.apk` and refresh `assets/android-runtime.json` with its SHA-256 and size. Alternatively set `KART64_ANDROID_APK` to a verified APK with that filename when building the desktop executable. The desktop spec rejects a hash mismatch. Review Mozilla, NanoHTTPD, Android and bundled native-library notices and signing/update policy before public distribution.

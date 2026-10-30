@@ -2,6 +2,8 @@
 <h1 align="center">Kart64 TV</h1>
 <p align="center">Mario Kart 64 on your TV. Bring your own ROM.</p>
 
+**[Download for Windows](https://github.com/Ticklect/kart64-tv/releases/download/v0.1.4/Kart64TV-0.1.4-Windows-x64.exe)** · [Release notes](https://github.com/Ticklect/kart64-tv/releases/tag/v0.1.4)
+
 ![Kart64 TV installer](docs/screenshot.png)
 
 I started this to get Mario Kart 64 running directly on my Samsung TV. It worked, so I'm turning the setup into something other people can use.
@@ -23,7 +25,9 @@ The latest startup changes are PC-tested and awaiting a TV retest. See the [meas
 
 ### Try it
 
-On Windows, install Python 3.12+, then run:
+Download the Windows x64 EXE above and open it. Python is bundled; required Samsung tools and Node.js are downloaded and verified when needed. Internet access is required during setup.
+
+To run from source instead, install Python 3.12+ and run:
 
 ```sh
 pip install -r requirements.txt
@@ -32,8 +36,10 @@ python studio.py
 
 Select a TV and your own supported US Mario Kart 64 ROM (`.z64`) or SpaghettiKart archive (`.o2r`). Developer Mode and platform-specific pairing are required. No game files are included.
 
-Android and Fire OS installation also require a locally built launcher APK; build instructions are below.
+The Windows EXE includes the experimental Android / Fire OS launcher. Those TVs still require Android platform-tools and authorised pairing; LG requires the official webOS CLI.
 
 [Setup and development](docs/DEVELOPMENT.md) · [Android / Google TV](android/README.md) · [Fire TV](android/FIRE-TV.md)
 
 Built on [Edd Mann's Kart64](https://eddmann.com/kart64/) and [Harbour Masters' SpaghettiKart](https://github.com/HarbourMasters/SpaghettiKart). This project adds the TV installer and integration. Not affiliated with Nintendo.
+
+The EXE includes Qt/PySide6 (LGPLv3), Python and an Android launcher using GeckoView. [Licenses, dependency sources and rebuilding instructions](packaging/SOURCES.md) are supplied with the release.
