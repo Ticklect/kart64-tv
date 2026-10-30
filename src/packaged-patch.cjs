@@ -15,15 +15,19 @@ function skipExtractionPreload(source){
  const section=source.slice(a,b);
  const names=[...section.matchAll(/filename:"([^"]+)"/g)].map(x=>x[1]);
  if(names.length!==129||names.some(name=>!name.startsWith('/torch/'))||!section.endsWith('remote_package_size:7967812})})()'))throw Error('Unexpected extraction preload contents');
- const result=source.slice(0,a)+source.slice(b+1);
- return replaceOnce(result,'var response=await readAsync(binaryFile);','var response=await(globalThis.Kart64Boot?Kart64Boot.readInstalledFile("Spaghettify.wasm",()=>readAsync(binaryFile)):readAsync(binaryFile));');
+ let result=source.slice(0,a)+source.slice(b+1);
+ result=replaceOnce(result,'var response=await readAsync(binaryFile);','var response=await(globalThis.Kart64Boot?Kart64Boot.readInstalledFile("Spaghettify.wasm",()=>readAsync(binaryFile)):readAsync(binaryFile));');
+ return replaceOnce(result,'IDBFS.loadRemoteEntry(store,path,','(globalThis.Kart64Boot?Kart64Boot.loadRestoredEntry.bind(null,src,IDBFS):IDBFS.loadRemoteEntry)(store,path,');
 }
 
 function patchPackagedStartup(html){
  html=replaceOnce(html,'<script>\nconst ROM_SHA1', '<script src="packaged-boot.js"></script>\n<script>\nconst ROM_SHA1');
- html=replaceOnce(html,'  const r = await fetch(name);','  const r = await Kart64Boot.fetchInstalled(name);');
+ html=replaceOnce(html,"  const r = await fetch(name);\n  if (!r.ok) throw new Error(name + ': HTTP ' + r.status);\n  FS.writeFile('/data/' + name, new Uint8Array(await r.arrayBuffer()), {canOwn:true});", "  const bytes = await Kart64Boot.readAsset(name);\n  FS.writeFile('/data/' + name, new Uint8Array(bytes), {canOwn:true});");
  html=replaceOnce(html,"await fetch('courses.json', { cache: 'no-cache' })","await Kart64Boot.fetchInstalled('courses.json', { cache: 'no-cache' })");
  html=replaceOnce(html,"await fetch(course.archive, { cache: 'no-cache' })","await Kart64Boot.fetchInstalled(course.archive, { cache: 'no-cache' })");
+ html=replaceOnce(html,"packTx('readonly', st => st.getKey('current')).then(k => {\n  if (k) getPack().then(p => { installedPack = p?.name || null; showPack(); });\n}).catch(() => {});","const packPresence = packTx('readonly', st => st.getKey('current')).then(k => {\n  if (k) getPack().then(p => { installedPack = p?.name || null; showPack(); });\n  return !!k;\n}).catch(() => true);");
+ html=replaceOnce(html,'async function installPack() {','async function installPack() {\n  const packChanged = !!pendingPack || removePack;');
+ html=replaceOnce(html,'  const pack = await getPack().catch(() => null);','  const pack = await Kart64Boot.loadTexturePack(packPresence, packChanged, getPack);');
  const start="        if (!have('config.yml')) {";
  const end='        // Persist config/saves/extracted assets.';
  const a=html.indexOf(start),b=html.indexOf(end);

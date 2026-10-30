@@ -20,7 +20,7 @@ function getRemoteSaveSet(idbfs,mount,callback,fallback=()=>callback(Error('Bulk
  idbfs.getDB(mount.mountpoint,(error,db)=>{
   if(error)return callback(error);
   let finished=false;
-  const entries={};
+  const entries={},records=Object.create(null);
   const done=(error,result)=>{if(!finished){finished=true;callback(error,result)}};
   try{
    const transaction=db.transaction([idbfs.DB_STORE_NAME],'readonly');
@@ -28,19 +28,27 @@ function getRemoteSaveSet(idbfs,mount,callback,fallback=()=>callback(Error('Bulk
    if(typeof store.getAllKeys!=='function')return fallback(mount,callback);
    transaction.onerror=event=>{event.preventDefault();done(event.target.error||Error('Could not read saved data'))};
    transaction.onabort=()=>done(transaction.error||Error('Saved-data read was aborted'));
-   transaction.oncomplete=()=>done(null,{type:'remote',db,entries});
+   transaction.oncomplete=()=>done(null,{type:'remote',db,entries,records});
    const request=store.getAllKeys();
    request.onsuccess=()=>{
     try{
      for(const path of request.result){
       if(typeof path!=='string'||!persistentPath(path))continue;
       const read=store.get(path);
-      read.onsuccess=()=>{const value=read.result;if(value&&value.timestamp!==undefined)entries[path]={timestamp:value.timestamp}};
+      read.onsuccess=()=>{const value=read.result;if(value&&value.timestamp!==undefined){entries[path]={timestamp:value.timestamp};records[path]=value}};
      }
     }catch(error){done(error)}
    };
   }catch(error){done(error)}
  });
+}
+function loadRestoredEntry(remote,idbfs,store,path,callback){
+ if(remote.records&&Object.prototype.hasOwnProperty.call(remote.records,path))return callback(null,remote.records[path]);
+ return idbfs.loadRemoteEntry(store,path,callback);
+}
+async function loadTexturePack(presence,changed,read){
+ if(!changed){try{if(await presence===false)return null}catch(error){/* Unknown state uses the normal reader. */}}
+ try{return await read()}catch(error){return null}
 }
 const configuredStorage=new WeakSet();
 function configureStorage(idbfs){
@@ -67,15 +75,16 @@ async function readInstalledFile(name,fallback,filesystem=root.tizen?.filesystem
  }
  return fallback();
 }
-async function fetchInstalled(name,options){
- const bytes=await readInstalledFile(name,async()=>{
+function readAsset(name,options){return readInstalledFile(name,async()=>{
   const response=await root.fetch(name,options);
   if(!response.ok)throw Error(name+': HTTP '+response.status);
   return response.arrayBuffer();
- });
+})}
+async function fetchInstalled(name,options){
+ const bytes=await readAsset(name,options);
  return new Response(bytes,{headers:{'Content-Type':name.endsWith('.json')?'application/json':'application/octet-stream'}});
 }
-const api={persistentPath,prepareGame,createTrace,readInstalledFile,fetchInstalled,getRemoteSaveSet,configureStorage};
+const api={persistentPath,prepareGame,createTrace,readInstalledFile,readAsset,fetchInstalled,getRemoteSaveSet,configureStorage,loadRestoredEntry,loadTexturePack};
 if(typeof module!=='undefined'&&module.exports){module.exports=api;return}
 const trace=createTrace(()=>performance.now());
 root.Kart64Boot=Object.assign(api,trace);

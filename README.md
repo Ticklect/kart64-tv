@@ -19,7 +19,7 @@ The desktop app finds TVs, prepares your game files locally, installs the TV app
 
 This is an early prototype. TV model and operating system matter. Roku, VIDAA and Vega OS aren't supported yet.
 
-Startup performance is still being improved. See the [measured Samsung boot times](docs/STARTUP.md).
+The latest startup changes are PC-tested and awaiting a TV retest. See the [measured Samsung boot times](docs/STARTUP.md).
 
 ### Try it
 

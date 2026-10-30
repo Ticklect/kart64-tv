@@ -1,6 +1,6 @@
 const {test}=require('node:test');
 const assert=require('node:assert/strict');
-const {persistentPath,prepareGame,createTrace,readInstalledFile,getRemoteSaveSet}=require('../src/packaged-boot.js');
+const {persistentPath,prepareGame,createTrace,readInstalledFile,getRemoteSaveSet,loadRestoredEntry,loadTexturePack}=require('../src/packaged-boot.js');
 const {skipExtractionPreload,patchPackagedStartup}=require('../src/packaged-patch.cjs');
 const vm=require('node:vm');
 
@@ -34,7 +34,7 @@ test('boot trace records actual stage durations and resets each launch',()=>{
 
 test('removes the extraction-only preload and still executes the runtime',()=>{
  const files=Array.from({length:129},(_,i)=>`{filename:"/torch/${i}.yml"}`).join(',');
- const script=`var Module={};if(!Module["expectedDataFileDownloads"])Module.expectedDataFileDownloads=0;(()=>{function loadPackage() { throw Error('Extraction download ran'); }loadPackage({files:[${files}],remote_package_size:7967812})})();var programArgs=[];async function getWasmBinary(binaryFile){var response=await readAsync(binaryFile);}globalThis.runtimeRan=true;`;
+ const script=`var Module={};if(!Module["expectedDataFileDownloads"])Module.expectedDataFileDownloads=0;(()=>{function loadPackage() { throw Error('Extraction download ran'); }loadPackage({files:[${files}],remote_package_size:7967812})})();var programArgs=[];async function getWasmBinary(binaryFile){var response=await readAsync(binaryFile);}function restore(src,store,path){IDBFS.loadRemoteEntry(store,path,()=>{})}globalThis.runtimeRan=true;`;
  const context={};vm.runInNewContext(skipExtractionPreload(script),context);
  assert.equal(context.runtimeRan,true);
  assert.throws(()=>skipExtractionPreload(script.replace('/torch/0.yml','/game/required.bin')),/contents/);
@@ -70,6 +70,8 @@ test('bulk storage lookup skips extraction entries and preserves save timestamps
  assert.deepEqual(gets,['/data/default.sav','/data/spaghettify.cfg.json']);
  assert.deepEqual(result.entries,{'/data/default.sav':{timestamp},'/data/spaghettify.cfg.json':{timestamp}});
  assert.equal(result.db,db);assert.equal(result.type,'remote');
+ assert.equal(result.records['/data/default.sav'],values['/data/default.sav']);
+ assert.equal(result.records['/data/mk64.o2r'],undefined);
 });
 
 test('storage failures never become an empty successful save restore',async()=>{
@@ -88,4 +90,39 @@ test('a failed metadata transaction reports one error even if completion follows
  const idbfs={DB_STORE_NAME:'FILE_DATA',getDB(name,callback){callback(null,{transaction(){transaction={objectStore:()=>store};return transaction}})}};
  await new Promise(resolve=>getRemoteSaveSet(idbfs,{mountpoint:'/data'},error=>{count++;assert.match(error.message,/Read failed/);resolve()}));
  assert.equal(count,1);
+});
+
+test('the game archive reader returns its original buffer without wrapping it in a Response',async()=>{
+ const bytes=new Uint8Array([64,1,2]).buffer;
+ const window={tizen:{filesystem:{openFile(){return {readBlobNonBlocking(ok){ok({size:bytes.byteLength,arrayBuffer:async()=>bytes})},close(){}}}}}};
+ const context={window,performance:{now:()=>0},setTimeout,clearTimeout,Blob,Response};
+ vm.runInNewContext(require('node:fs').readFileSync(require.resolve('../src/packaged-boot.js'),'utf8'),context);
+ assert.equal(await window.Kart64Boot.readAsset('mk64.o2r'),bytes);
+});
+
+test('restores a save from the metadata snapshot without reading it a second time',()=>{
+ const entry={timestamp:new Date(12345),mode:33206,contents:new Uint8Array([1,64])};let restored;
+ loadRestoredEntry({records:{'/data/default.sav':entry}},{loadRemoteEntry(){throw Error('Duplicate database read')}},{},'/data/default.sav',(error,value)=>{assert.equal(error,null);restored=value});
+ assert.equal(restored,entry);
+});
+
+test('older metadata producers still use the original save reader and propagate its errors',()=>{
+ const store={},failure=Error('Read failed');let called=false;
+ const idbfs={loadRemoteEntry(actualStore,path,callback){assert.equal(actualStore,store);assert.equal(path,'/data/default.sav');called=true;callback(failure)}};
+ loadRestoredEntry({entries:{}},idbfs,store,'/data/default.sav',error=>assert.equal(error,failure));assert.equal(called,true);
+});
+
+test('an explicitly empty texture-pack slot avoids reopening its database',async()=>{
+ let reads=0;
+ assert.equal(await loadTexturePack(Promise.resolve(false),false,async()=>{reads++;return {name:'pack'}}),null);
+ assert.equal(reads,0);
+});
+
+test('selected, installed and unknown texture packs retain the normal loading path',async()=>{
+ const pack={name:'chosen.o2r'};let reads=0;
+ const read=async()=>{reads++;return pack};
+ assert.equal(await loadTexturePack(Promise.resolve(false),true,read),pack);
+ assert.equal(await loadTexturePack(Promise.resolve(true),false,read),pack);
+ assert.equal(await loadTexturePack(Promise.reject(Error('Lookup failed')),false,read),pack);
+ assert.equal(reads,3);
 });
