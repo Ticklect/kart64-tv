@@ -1,11 +1,22 @@
-# Startup work
+# Startup
 
-The game runs, but booting on the tested Samsung UE50U8000FKXXU (Tizen 9) is too slow.
+Version 0.1.3 reached the engine in **127.9 seconds** on its first launch after updating the Samsung UE50U8000FKXXU (Tizen 9).
 
-An existing installation was first observed engine-ready about 285 seconds after Start during the current debug test. The preceding observation was still loading at 260 seconds, so this is a range, not an exact boot time. Earlier diagnostic runs recorded about 263–296 seconds, and one first launch recorded about 659 seconds. These are individual observations on one TV.
+| Observation | Start to engine ready |
+| --- | --- |
+| Previous existing installation | Between 260 and 285 seconds |
+| Earlier recorded first launch | About 659 seconds |
+| 0.1.3 first launch after update | 127.9 seconds |
 
-The current investigation separates runtime file reads, WebAssembly compilation, saved-data restore, asset loading and engine startup. Desktop timings do not predict TV boot speed. First launch after an update and repeat launches are being checked separately.
+These are individual debug-mode observations on one TV, with different cache conditions. Timing starts at the app's Start action, rather than turning on the TV. It ends at the engine-ready signal, rather than a completed race. Other TVs may behave differently.
 
-The first candidate removes an extraction-only preload and records startup stages. It is still under test: no TV speed-up is claimed yet. Large packaged-file reads are a confirmed source of delay; one observed WebAssembly read alone took 157 seconds before compilation.
+## What changed
 
-Saves and settings must survive updates. Game files and raw private test outputs stay off GitHub.
+- Samsung reads installed runtime and game files through its native package reader, with a browser fallback. An isolated 8 MB read took about 3.2 seconds; one earlier browser-loader read took 157 seconds.
+- Saved-data restore uses a bulk key lookup instead of walking 204 database entries one at a time. The restore stage fell from about 105 seconds in the preceding candidate to 23 seconds in this run.
+- The app skips an 8 MB extraction-only preload. Game data is already prepared on the PC, so the TV does not need those recipes.
+- Installed game archives stay separate from save-data sync. Existing saves and settings are restored, and local diagnostics retain each boot stage.
+
+The Samsung package declares the read-only filesystem privilege for its installed assets. The native reader follows Samsung's [file-operation API](https://developer.samsung.com/smarttv/develop/guides/data-handling/managing-file-operations.html). It accepts fixed runtime filenames and bundled course paths. Other platforms retain the browser reader; their hardware performance is unverified.
+
+Validation includes 88 automated tests and actual browser cold/repeat game boots with a saved-file round trip. Game files and raw private test outputs stay off GitHub.

@@ -5,7 +5,7 @@ class WebOSTests(unittest.TestCase):
  def test_prepares_private_webos_app(self):
   with tempfile.TemporaryDirectory() as d:
    p=Path(d);runtime=p/'runtime';out=p/'out';runtime.mkdir();out.mkdir();game=p/'game.o2r'
-   for n in ['index.html','Spaghettify.js','Spaghettify.wasm','Spaghettify.data','spaghetti.o2r','courses.json','courses/silverstone/silverstone-v1.9.o2r','apple-touch-icon.png','diagnostics.js','config.xml']:
+   for n in ['index.html','Spaghettify.js','Spaghettify.wasm','Spaghettify.data','spaghetti.o2r','courses.json','courses/silverstone/silverstone-v1.9.o2r','apple-touch-icon.png','diagnostics.js','packaged-boot.js','config.xml']:
     x=runtime/n;x.parent.mkdir(parents=True,exist_ok=True);x.write_bytes(b'test')
    with zipfile.ZipFile(game,'w') as z:z.writestr('asset','test')
    prepare_webos_stage(runtime,game,out)

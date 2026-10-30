@@ -32,7 +32,7 @@ def validate_archive(file):
 
 def make_package(stage,archive,output):
     stage,output=Path(stage),Path(output);archive=validate_archive(archive)
-    required=('config.xml','index.html','Spaghettify.js','Spaghettify.wasm','diagnostics.js')
+    required=('config.xml','index.html','Spaghettify.js','Spaghettify.wasm','diagnostics.js','packaged-boot.js')
     if not all((stage/n).is_file() for n in required): raise ValueError('Incomplete runtime package.')
     if output.exists(): raise ValueError('Package output already exists.')
     files=sorted(stage.rglob('*'))

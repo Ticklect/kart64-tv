@@ -257,6 +257,6 @@ def main():
     root=tk.Tk();Installer(root);root.mainloop()
 if __name__=='__main__':
     if sys.argv[1:]==['--self-test']:
-        required=('build-runtime.cjs','runtime.cjs','runtime-pins.json','web-patch.cjs','diagnostics.js','collect-benchmark.cjs')
+        required=('build-runtime.cjs','runtime.cjs','runtime-pins.json','web-patch.cjs','packaged-patch.cjs','packaged-boot.js','diagnostics.js','collect-benchmark.cjs')
         sys.exit(0 if all((ROOT/'src'/name).is_file() for name in required) and all((ROOT/'benchmark'/name).is_file() for name in ('index.html','run.js','benchmark.js')) else 1)
     main()

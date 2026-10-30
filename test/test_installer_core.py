@@ -55,7 +55,7 @@ class CoreTests(unittest.TestCase):
  def test_package_contains_user_data_and_no_signatures(self):
   with tempfile.TemporaryDirectory() as d:
    p=Path(d);stage=p/'stage';stage.mkdir();archive=p/'game.o2r'
-   for n in ('config.xml','index.html','Spaghettify.js','Spaghettify.wasm','diagnostics.js'):(stage/n).write_bytes(b'test')
+   for n in ('config.xml','index.html','Spaghettify.js','Spaghettify.wasm','diagnostics.js','packaged-boot.js'):(stage/n).write_bytes(b'test')
    with zipfile.ZipFile(archive,'w') as z:z.writestr('asset','example')
    target=p/'private.wgt';make_package(stage,archive,target)
    with zipfile.ZipFile(target) as z:

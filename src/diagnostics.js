@@ -6,7 +6,7 @@ function createRecorder(o){
  let data={launches:0,lastBootMs:null,racesStarted:0,racesFinished:0,availableMemoryBytes:null,totalMemoryBytes:null,wasmMemoryBytes:null,systemCpuLoad:null,gpuLoad:null,temperatureC:null,animationCallbackHz:null,swapRate:null,recentBoots:[],recentRaces:[]};
  try{let old=JSON.parse(storage.getItem(KEY)||'null');if(old&&typeof old==='object')for(const k of ['launches','lastBootMs','racesStarted','racesFinished'])if(Number.isFinite(old[k])&&old[k]>=0)data[k]=old[k];for(const k of ['recentBoots','recentRaces'])if(Array.isArray(old?.[k]))data[k]=old[k].slice(-20)}catch(e){}
  const persist=()=>{try{storage.setItem(KEY,JSON.stringify(data))}catch(e){}};
- return {markInput(){engaged=true},start(){data.launches++;boot=now();persist()},ready(){if(boot!==null){data.lastBootMs=Math.max(0,now()-boot);data.recentBoots.push({durationMs:data.lastBootMs});data.recentBoots=data.recentBoots.slice(-20);boot=null;persist()}},sample(x){
+ return {markInput(){engaged=true},start(){data.launches++;boot=now();persist()},ready(stages=[]){if(boot!==null){data.lastBootMs=Math.max(0,now()-boot);data.recentBoots.push({durationMs:data.lastBootMs,stages:stages.slice(0,32).map(x=>({name:x.name,ms:x.ms}))});data.recentBoots=data.recentBoots.slice(-20);boot=null;persist()}},sample(x){
   if(x.callbackMs>0&&Number.isFinite(x.callbackMs)){data.animationCallbackHz=Math.round(10000/x.callbackMs)/10}
   if(x.memory){data.totalMemoryBytes=Number.isFinite(x.memory.total)?x.memory.total:null;data.availableMemoryBytes=Number.isFinite(x.memory.available)?x.memory.available:null}
   if(Number.isFinite(x.wasmMemoryBytes))data.wasmMemoryBytes=x.wasmMemoryBytes;
@@ -29,12 +29,14 @@ addEventListener('keydown',e=>{if(document.getElementById('overlay').classList.c
 function num(v,unit){return Number.isFinite(v)?(v/1048576).toFixed(0)+' MB':unit||'unavailable'}
 setInterval(()=>{
  let state=null,mem=null,wasm=null;try{if(typeof readState==='function')state=readState()}catch(e){}
- if(state&&!ready){ready=true;r.ready()}
+ if(state&&!ready){ready=true;r.ready(root.Kart64Boot?root.Kart64Boot.snapshot():[])}
  try{if(typeof tizen!=='undefined'&&tizen.systeminfo){mem={total:tizen.systeminfo.getTotalMemory(),available:tizen.systeminfo.getAvailableMemory()};if(cpuPending&&performance.now()-cpuStarted>5000){cpuPending=false;cpu=null}if(!cpuPending){cpuPending=true;cpuStarted=performance.now();tizen.systeminfo.getPropertyValue('CPU',x=>{cpu=Number.isFinite(x.load)?x.load:null;cpuPending=false},()=>{cpu=null;cpuPending=false})}}}catch(e){cpu=null;cpuPending=false}
  try{if(typeof HEAPU8!=='undefined')wasm=HEAPU8.byteLength}catch(e){}
  let swaps=root.__kartFrameSwaps, t=performance.now(), swapRate=(Number.isFinite(swaps)&&lastSwaps!==null&&t>lastSwapTime)?Math.round((swaps-lastSwaps)*10000/(t-lastSwapTime))/10:null;lastSwaps=Number.isFinite(swaps)?swaps:null;lastSwapTime=t;
  r.sample({state,memory:mem,wasmMemoryBytes:wasm,cpu,swapRate,callbackMs:count?sum/count:null});sum=0;count=0;let d=r.snapshot();
  body.textContent='Launches: '+d.launches+'\nLast boot: '+(d.lastBootMs===null?'unavailable':(d.lastBootMs/1000).toFixed(1)+' s')+'\nRaces started / finished: '+d.racesStarted+' / '+d.racesFinished+'\nLast race duration: '+(d.recentRaces.length?(d.recentRaces[d.recentRaces.length-1].durationMs/1000).toFixed(1)+' s':'unavailable')+'\nAnimation callbacks: '+(d.animationCallbackHz===null?'unavailable':d.animationCallbackHz+'/s (not game FPS)')+'\nGame buffer swaps: '+(d.swapRate===null?'unavailable':d.swapRate+'/s')+'\nTV memory free / total: '+num(d.availableMemoryBytes)+' / '+num(d.totalMemoryBytes)+'\nWasm allocation: '+num(d.wasmMemoryBytes)+'\nSystem CPU: '+(d.systemCpuLoad===null?'unavailable':(d.systemCpuLoad*100).toFixed(1)+'%')+'\nGPU load: unavailable\nTemperature: unavailable';
+ const stages=d.recentBoots.length?d.recentBoots[d.recentBoots.length-1].stages:null;
+ if(stages&&stages.length)body.textContent+='\nBoot stages (elapsed):\n'+stages.map(x=>x.name.replace(/-/g,' ')+': '+(x.ms/1000).toFixed(1)+' s').join('\n');
  r.persist();
 },5000);
 addEventListener('pagehide',()=>r.persist());
