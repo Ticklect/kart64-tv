@@ -2,7 +2,7 @@
 <h1 align="center">Kart64 TV</h1>
 <p align="center">Mario Kart 64 on your TV. Bring your own ROM.</p>
 
-**[Download for Windows](https://github.com/Ticklect/kart64-tv/releases/download/v0.1.4/Kart64TV-0.1.4-Windows-x64.exe)** · [Release notes](https://github.com/Ticklect/kart64-tv/releases/tag/v0.1.4)
+**[Download version 1.0 for Windows](https://github.com/Ticklect/kart64-tv/releases/download/v1.0/Kart64TV-1.0-Windows-x64.exe)** · [Release notes](https://github.com/Ticklect/kart64-tv/releases/tag/v1.0)
 
 [Android / Google TV / Fire OS APK](https://github.com/Ticklect/kart64-tv/releases/latest/download/Kart64TV-Android-TV.apk) — experimental; the Windows app is still needed to transfer your game files.
 

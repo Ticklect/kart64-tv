@@ -63,7 +63,7 @@ def prepare(cache, output, apk):
     (legal / 'NanoHTTPD-LICENSE.md').write_bytes(nano)
     shutil.copyfile(ROOT / 'packaging/SOURCES.md', legal / 'SOURCES.md')
     shutil.copyfile(ROOT / 'packaging/dependency-sources.json', legal / 'dependency-sources.json')
-    bundle = output / 'Kart64TV-0.1.4-DependencySources.zip'
+    bundle = output / 'Kart64TV-1.0-DependencySources.zip'
     with zipfile.ZipFile(bundle, 'w', allowZip64=True) as target:
         for pin in pins:
             target.write(cache / pin['file'], 'sources/' + pin['file'], compress_type=zipfile.ZIP_STORED)

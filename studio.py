@@ -184,7 +184,7 @@ class Studio(QMainWindow):
         self.stack=QStackedWidget();self.nav=[]
         for i,label in enumerate(('Install','Devices','Performance','Activity')):
             b=QPushButton(label);b.setObjectName('nav');b.setCheckable(True);b.clicked.connect(lambda checked=False,n=i:self.navigate(n));side.addWidget(b);self.nav.append(b)
-        side.addStretch();self.task_status=text('Ready','muted');side.addWidget(self.task_status);side.addSpacing(8);side.addWidget(text('Prototype · 0.1','muted'))
+        side.addStretch();self.task_status=text('Ready','muted');side.addWidget(self.task_status);side.addSpacing(8);side.addWidget(text('Version 1.0','muted'))
         outer.addWidget(self.stack,1)
         self.overview=self.page();self.tv_page=self.page();self.performance=self.page();self.activity=self.page()
         self.build_overview();self.build_tvs();self.build_performance();self.build_activity();self.update_selection();self.navigate(0)

@@ -32,6 +32,6 @@ def prepare_webos_stage(runtime,archive,output):
     shutil.copyfile(archive,output/'mk64.o2r')
     assets=Path(__file__).resolve().parent/'assets'
     shutil.copyfile(assets/'kart64-80.png',output/'icon.png');shutil.copyfile(assets/'kart64-130.png',output/'largeIcon.png')
-    info={'id':'com.ticklect.kart64','version':'0.1.0','vendor':'Ticklect','type':'web','main':'index.html','title':'Kart64 TV','icon':'icon.png','largeIcon':'largeIcon.png','iconColor':'#1e3887','requiredACG':[]}
+    info={'id':'com.ticklect.kart64','version':'1.0.0','vendor':'Ticklect','type':'web','main':'index.html','title':'Kart64 TV','icon':'icon.png','largeIcon':'largeIcon.png','iconColor':'#1e3887','requiredACG':[]}
     (output/'appinfo.json').write_text(json.dumps(info,indent=2)+'\n',encoding='utf-8')
     return output

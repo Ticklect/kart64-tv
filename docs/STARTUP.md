@@ -1,6 +1,6 @@
 # Startup
 
-## 0.1.4: PC-tested, TV timings pending
+## 1.0: PC-tested, TV timings pending
 
 The next startup changes remove work rather than adding more simultaneous reads:
 
@@ -8,7 +8,7 @@ The next startup changes remove work rather than adding more simultaneous reads:
 - Reuse the initial texture-pack lookup when its slot is explicitly empty. Installed or newly selected packs still load normally; an unknown lookup result uses the normal reader.
 - Pass game archive buffers directly into the virtual filesystem, avoiding an extra Response wrapper and buffer copy.
 
-All 93 automated tests pass, and actual browser cold/repeat game boots preserve a saved test file. This version has not been installed or timed on the TV. The hardware measurements below remain for 0.1.3.
+All 94 automated tests pass, and actual browser cold/repeat game boots preserve a saved test file. This version has not been installed or timed on the TV. The hardware measurements below remain for 0.1.3.
 
 Archive prefetch was investigated but is not enabled: the tested approaches caused storage contention without a reliable full-boot improvement.
 

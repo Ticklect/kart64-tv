@@ -2,7 +2,7 @@ plugins { id 'com.android.application' }
 android {
     namespace 'com.ticklect.kart64'
     compileSdk 37
-    defaultConfig { applicationId 'com.ticklect.kart64'; minSdk 26; targetSdk 36; versionCode 4; versionName '0.1.4' }
+    defaultConfig { applicationId 'com.ticklect.kart64'; minSdk 26; targetSdk 36; versionCode 5; versionName '1.0' }
     androidResources { noCompress += ['wasm','o2r','data'] }
     compileOptions { sourceCompatibility JavaVersion.VERSION_17; targetCompatibility JavaVersion.VERSION_17 }
 }
