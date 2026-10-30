@@ -13,7 +13,7 @@ class ToolTests(unittest.TestCase):
  def test_cli_uses_override_or_prepares_automatically(self):
   with tempfile.TemporaryDirectory() as d:
    p=Path(d);exe=p/'apps2samsung-cli.exe';exe.write_bytes(b'fake')
-   self.assertEqual(resolve_cli(str(exe),p,lambda *args:None),exe)
+   self.assertTrue(resolve_cli(str(exe),p,lambda *args:None).samefile(exe))
    self.assertEqual(resolve_cli('',p,lambda name,folder,progress:exe),exe)
    with self.assertRaises(ValueError):resolve_cli(str(p/'wrong.exe'),p,lambda *args:exe)
  def test_wrong_archive_rejected(self):
