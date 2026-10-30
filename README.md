@@ -6,6 +6,8 @@
 
 [Android / Google TV / Fire OS APK](https://github.com/Ticklect/kart64-tv/releases/latest/download/Kart64TV-Android-TV.apk) — experimental; the Windows app is still needed to transfer your game files.
 
+**Install on Android / Google TV / Fire OS using Downloader (AFTVnews):** Open Downloader on your TV, enter code **`7989374`**, and press Go to download the Kart64 TV APK. You can also use [aftv.news/7989374](https://aftv.news/7989374). Allow Downloader to install the APK if your TV asks for permission. This installs the **TV launcher only**; use the Windows app with a paired TV to transfer your own game files before playing. Android and Fire OS compatibility remains experimental.
+
 ![Kart64 TV installer](docs/screenshot.png)
 
 I started this to get Mario Kart 64 running directly on my Samsung TV. It worked, so I'm turning the setup into something other people can use.

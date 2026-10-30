@@ -1,11 +1,25 @@
 import os,unittest
 os.environ['QT_QPA_PLATFORM']='offscreen'
-from PySide6.QtWidgets import QApplication
-from studio import Studio
+from PySide6.QtWidgets import QApplication,QLabel,QPushButton
+from studio import Studio,DOWNLOADER_CODE,DOWNLOADER_URL
 
 class StudioTests(unittest.TestCase):
  @classmethod
  def setUpClass(cls):cls.qt=QApplication.instance() or QApplication([])
+ def test_downloader_code_shown_and_copyable_before_tv_selection(self):
+  window=Studio(start_scan=False)
+  clipboard=QApplication.clipboard();previous=clipboard.text()
+  try:
+   self.assertEqual(DOWNLOADER_CODE,'7989374')
+   self.assertEqual(window.downloader_code.text(),DOWNLOADER_CODE)
+   labels=[label.text() for label in window.findChildren(QLabel)]
+   self.assertTrue(any(DOWNLOADER_URL in label for label in labels))
+   self.assertTrue(any('launcher only' in label.lower() and 'game data' in label.lower() for label in labels))
+   copy=next(button for button in window.findChildren(QPushButton) if button.text()=='Copy code')
+   self.assertTrue(copy.isEnabled())
+   copy.click();self.assertEqual(clipboard.text(),DOWNLOADER_CODE)
+  finally:
+   clipboard.setText(previous);window.shutdown()
  def test_selection_and_support(self):
   window=Studio(start_scan=False)
   try:

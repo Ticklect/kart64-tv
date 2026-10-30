@@ -8,7 +8,7 @@ The earlier WebView experiment lacked shared memory support in the emulator. The
 
 ## User setup
 
-The standalone APK is available at [this stable download URL](https://github.com/Ticklect/kart64-tv/releases/latest/download/Kart64TV-Android-TV.apk). It can be entered into AFTVnews's URL shortener for use in Downloader on compatible Android/Google TV and Fire OS devices. The APK installs the launcher only; phone/USB import is not implemented. Continue with the PC setup below to prepare and transfer your own game data.
+The standalone APK is available at [this stable download URL](https://github.com/Ticklect/kart64-tv/releases/latest/download/Kart64TV-Android-TV.apk). On a compatible Android/Google TV or Fire OS device, open the **Downloader by AFTVnews** app, enter **`7989374`** and press Go. The equivalent short link is [aftv.news/7989374](https://aftv.news/7989374). If prompted, allow Downloader to install the APK. This installs the launcher only; phone/USB import is not implemented. Continue with the PC setup below to prepare and transfer your own game data.
 
 1. Enable debugging and pair the Android TV with the PC using official Android platform-tools. Modern wireless debugging may use a port other than 5555. The installer does not turn debugging on or grant access for you.
 2. Ensure `adb` is on PATH and the paired network target is shown as `device` by `adb devices -l`.

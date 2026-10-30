@@ -17,6 +17,9 @@ from tools_core import prepare_tool
 from android_core import validate_android_serial,create_content_tar,classify_android_target,discover_android
 from uninstall import remove_app
 
+DOWNLOADER_CODE = '7989374'
+DOWNLOADER_URL = 'https://aftv.news/' + DOWNLOADER_CODE
+
 STYLE='''
 QWidget { background:#fafaf9; color:#262626; font-family:"Segoe UI"; font-size:13px; }
 QFrame#sidebar { background:#f0f0ee; border-right:1px solid #dededb; }
@@ -53,6 +56,7 @@ QLabel#title { font-family:"Arial Black"; font-size:27px; color:#ffe047; }
 QLabel#muted { color:#c4daed; }
 QLabel#cardTitle { color:#ffffff; font-size:15px; font-weight:700; }
 QLabel#eyebrow { color:#ffde4d; }
+QLabel#downloaderCode { color:#ffe047; font-family:Consolas; font-size:30px; font-weight:700; }
 QPushButton { background:#3b648e; border:2px solid #8daac0; border-bottom:4px solid #071f3d; color:white; border-radius:3px; font-weight:700; padding:9px 15px; }
 QPushButton:hover { background:#537da4; border-color:#ffe047; }
 QPushButton:disabled { background:#284c70; color:#879fb4; border-color:#345779; }
@@ -196,12 +200,21 @@ class Studio(QMainWindow):
         layout.addWidget(text(title,'title'));layout.addWidget(text(subtitle,'muted'));layout.addSpacing(12)
     def build_overview(self):
         self.heading(self.overview,'','Install game','Choose a television and a local game file.')
+        downloader,short=card();short.addWidget(text('Quick TV app install · Android / Google TV / Fire OS','cardTitle'))
+        short.addWidget(text('On your TV, open Downloader by AFTVnews, enter this code and press Go to download and install Kart64 TV.','muted'))
+        code_row=QHBoxLayout();self.downloader_code=text(DOWNLOADER_CODE,'downloaderCode');self.downloader_code.setTextInteractionFlags(Qt.TextSelectableByMouse);code_row.addWidget(self.downloader_code)
+        copy=QPushButton('Copy code');copy.clicked.connect(self.copy_downloader_code);code_row.addWidget(copy);code_row.addStretch();short.addLayout(code_row)
+        link=text('Short link: '+DOWNLOADER_URL,'muted');link.setTextInteractionFlags(Qt.TextSelectableByMouse);short.addWidget(link)
+        short.addWidget(text('Downloader installs the TV launcher only. To play, use this Windows app and a paired TV to transfer your own compatible game data.','muted'))
+        self.overview.addWidget(downloader)
         device,dl=card();dl.addWidget(text('Television','muted'));self.device_info=text('No TV selected','cardTitle');dl.addWidget(self.device_info);self.device_detail=text('Select a device from your network.','muted');dl.addWidget(self.device_detail);db=QPushButton('Select device');db.clicked.connect(lambda:self.navigate(1));dl.addWidget(db,alignment=Qt.AlignLeft);self.overview.addWidget(device)
         game,gl=card();gl.addWidget(text('Game file','muted'));self.game_name=text('No game file selected','cardTitle');gl.addWidget(self.game_name);self.game_info=text('US Mario Kart 64 ROM (.z64) or SpaghettiKart archive (.o2r).','muted');gl.addWidget(self.game_info);gb=QPushButton('Browse files');gb.clicked.connect(self.pick_game);gl.addWidget(gb,alignment=Qt.AlignLeft);self.overview.addWidget(game)
         self.next_title=text('Select a device','cardTitle');self.next_detail=text('','muted');self.overview.addWidget(self.next_title);self.overview.addWidget(self.next_detail)
         controls=QHBoxLayout();self.install_button=QPushButton('Install');self.install_button.setObjectName('primary');self.install_button.clicked.connect(self.install);controls.addWidget(self.install_button);self.test_button=QPushButton('Check compatibility');self.test_button.clicked.connect(self.benchmark);controls.addWidget(self.test_button);controls.addStretch();self.overview.addLayout(controls)
         self.overview.addWidget(text('Developer Mode and platform-specific setup are required. First game launch can take several minutes.','muted'))
         self.progress=QProgressBar();self.progress.setRange(0,0);self.progress.hide();self.overview.addWidget(self.progress);self.overview.addStretch()
+    def copy_downloader_code(self):
+        QApplication.clipboard().setText(DOWNLOADER_CODE)
     def build_tvs(self):
         self.heading(self.tv_page,'','Devices','Televisions on your local network.')
         bar=QHBoxLayout();self.scan_button=QPushButton('Scan network');self.scan_button.clicked.connect(self.scan);bar.addWidget(self.scan_button);bar.addStretch();self.tv_page.addLayout(bar)
@@ -358,7 +371,7 @@ def main():
     if sys.argv[1:]==['--smoke-test']:
         app=QApplication(sys.argv);window=Studio(start_scan=False);window.show();app.processEvents()
         window.set_devices([{'ip':'10.0.0.2','brand':'Samsung','name':'Test TV','model':'Test model','supported':True}]);window.set_game('test.z64');window.navigate(1);app.processEvents()
-        ok=window.tv_list.count()==1 and window.install_button.isEnabled() and window.test_button.isEnabled() and not window.grab().isNull()
+        ok=window.tv_list.count()==1 and window.install_button.isEnabled() and window.test_button.isEnabled() and window.downloader_code.text()==DOWNLOADER_CODE and not window.grab().isNull()
         window.shutdown();return 0 if ok else 1
     app=QApplication(sys.argv);window=Studio();window.show();return app.exec()
 if __name__=='__main__':sys.exit(main())

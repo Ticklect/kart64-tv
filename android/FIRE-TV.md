@@ -6,6 +6,8 @@ Before installation, discovery and the installer check Android API level 26 or n
 
 Amazon Vega OS is not Android and is not covered by this APK route. The official Amazon device specifications must be checked for the actual OS of a model; recent Fire TV products use both systems.
 
+For a quick launcher installation on a compatible Fire OS TV, open **Downloader by AFTVnews**, enter code **`7989374`**, press Go and install the downloaded APK (allow installations from Downloader if prompted). The equivalent URL is [aftv.news/7989374](https://aftv.news/7989374). This only installs the launcher: the Windows installer and authorised ADB pairing are still needed to transfer your own game data.
+
 Enable ADB debugging on the Fire OS device, open Devices in the installer and enter the TV's local address with its ADB port. Press Connect ADB and approve the debugging prompt on the TV. For modern Android wireless debugging, pairing may need to be completed with official platform-tools before connecting. Select the detected device and your supported local game file, then install. The game data stays in the app's private Android storage.
 
 The APK declares the standard Android launcher and TV launcher intent filters, includes the custom icon and TV banner, and requires no touchscreen. Amazon documents that sideloaded apps can be launched from the Apps area or Settings → Applications → Manage Installed Applications. Actual Fire TV home-screen behaviour, remotes, gamepads, saves and gameplay remain unverified.
