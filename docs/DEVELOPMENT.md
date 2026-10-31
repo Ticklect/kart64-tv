@@ -1,8 +1,8 @@
-# Kart64 on Samsung Tizen â€” public preparation draft
+# Kart64 on Samsung Tizen — public preparation draft
 
 ## Uninstall from a TV
 
-In the Qt dashboard, select the television under Devices and press **Uninstall Kart64 TVâ€¦**. Confirm the device name and IP in the dialog. Removing the app can remove TV-side game data and saves. Samsung, registered LG webOS, paired Android/Google TV and Fire OS routes use their respective tools; LG requires its CLI folder and matching registered target. The command is restricted to this project's fixed app ID, and the installer checks that the app is absent afterward. The legacy Kart64 Test app, if present, has a different ID and is not removed by this action. Unsupported platforms have no uninstall action.
+In the Qt dashboard, select the television under Devices and press **Uninstall Kart64 TV…**. Confirm the device name and IP in the dialog. Removing the app can remove TV-side game data and saves. Samsung, registered LG webOS, paired Android/Google TV and Fire OS routes use their respective tools; LG requires its CLI folder and matching registered target. The command is restricted to this project's fixed app ID, and the installer checks that the app is absent afterward. The legacy Kart64 Test app, if present, has a different ID and is not removed by this action. Unsupported platforms have no uninstall action.
 
 This is a work-in-progress collection of TV compatibility and diagnostics code from a private experiment. **It includes an experimental Windows installer, but is not yet a clean one-click release or public release.** No game data or prebuilt runtime is included.
 
@@ -15,7 +15,7 @@ The private experiment used locally generated, user-provided game assets. Do not
 ## Contents
 
 - `src/community.cjs`: local-only experimental opt-in report validation and summary; no network or backend.
-- `src/preflight.cjs`: local supported-game SHA-1 check and conservative TV compatibility classification. Tested on the ownerâ€™s private file; game content is not included.
+- `src/preflight.cjs`: local supported-game SHA-1 check and conservative TV compatibility classification. Tested on the owner’s private file; game content is not included.
 - `src/diagnostics.js`: experimental TV diagnostics panel, local counters and sampling. CPU and available memory are system-wide; WebAssembly memory is an allocation, not total application memory. Buffer swaps are not necessarily distinct displayed frames. Race counts use a heuristic.
 - `src/web-patch.cjs`: experimental adjustments for one specific upstream runtime shape. It deliberately rejects unexpected input. It is not a stable general-purpose Wasm patcher.
 
@@ -37,7 +37,7 @@ Kart64 is a browser project by Edd Mann; SpaghettiKart and the underlying Mario 
 
 Run `node --test test/preflight.test.cjs` with a current Node.js installation. The preflight module hashes a supplied file locally; it does not download or upload game data. Only a matching supported US ROM digest is accepted; this does not verify ownership.
 
-Only UE50U8000FKXXU running Tizen 9 is recorded as tested, and only for the observed single-player scenario. The 6.5 minimum follows the experimental package metadata; it is not evidence that every 6.5+ TV works. Other models remain untested until real-device runs. Firmware changes can alter results. Samsungâ€™s [web engine version table](https://developer.samsung.com/smarttv/develop/specifications/web-engine-specifications.html) helps identify differences but is not a compatibility guarantee.
+Only UE50U8000FKXXU running Tizen 9 is recorded as tested, and only for the observed single-player scenario. The 6.5 minimum follows the experimental package metadata; it is not evidence that every 6.5+ TV works. Other models remain untested until real-device runs. Firmware changes can alter results. Samsung’s [web engine version table](https://developer.samsung.com/smarttv/develop/specifications/web-engine-specifications.html) helps identify differences but is not a compatibility guarantee.
 
 The experimental Windows installer provides Samsung device discovery, automatic dependency setup, a GUI, local package generation and installation through Apps2Samsung. Samsung account sign-in and television developer-mode interaction can still require manual steps. An archive-based install has run on the TV; a ROM-to-package run has been tested with the final installation simulated. A complete ROM-to-TV install on a second device remains unverified.
 
