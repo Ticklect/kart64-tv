@@ -4,6 +4,11 @@ from PySide6.QtWidgets import QApplication,QLabel,QPushButton
 from studio import Studio,DOWNLOADER_CODE,DOWNLOADER_URL
 
 class StudioTests(unittest.TestCase):
+ def test_self_test_works_without_a_bundled_android_apk(self):
+  import subprocess,sys
+  result=subprocess.run([sys.executable,'studio.py','--self-test'],capture_output=True,timeout=15)
+  self.assertEqual(result.returncode,0,result.stderr.decode(errors='replace'))
+
  @classmethod
  def setUpClass(cls):cls.qt=QApplication.instance() or QApplication([])
  def test_downloader_code_shown_and_copyable_before_tv_selection(self):

@@ -2,9 +2,11 @@
 <h1 align="center">Kart64 TV</h1>
 <p align="center">Mario Kart 64 on your TV. Bring your own ROM.</p>
 
-**[Download version 1.0 for Windows](https://github.com/Ticklect/kart64-tv/releases/download/v1.0/Kart64TV-1.0-Windows-x64.exe)** · [Release notes](https://github.com/Ticklect/kart64-tv/releases/tag/v1.0)
+**[Download for Windows (36 MiB)](https://github.com/Ticklect/kart64-tv/releases/download/v1.0.1/Kart64TV-1.0.1-Windows-x64.exe)** · [Release notes](https://github.com/Ticklect/kart64-tv/releases/tag/v1.0.1)
 
-[Android / Google TV / Fire OS APK](https://github.com/Ticklect/kart64-tv/releases/latest/download/Kart64TV-Android-TV.apk) — experimental; the Windows app is still needed to transfer your game files.
+[Android / Google TV / Fire OS APK (universal)](https://github.com/Ticklect/kart64-tv/releases/latest/download/Kart64TV-Android-TV.apk) — experimental; the Windows app is still needed to transfer your game files.
+
+Smaller Android downloads: [ARM64](https://github.com/Ticklect/kart64-tv/releases/latest/download/Kart64TV-Android-TV-arm64-v8a.apk) · [ARM32](https://github.com/Ticklect/kart64-tv/releases/latest/download/Kart64TV-Android-TV-armeabi-v7a.apk). The Windows app picks the right processor automatically.
 
 **Install on Android / Google TV / Fire OS using Downloader (AFTVnews):** Open Downloader on your TV, enter code **`7989374`**, and press Go to download the Kart64 TV APK. You can also use [aftv.news/7989374](https://aftv.news/7989374). Allow Downloader to install the APK if your TV asks for permission. This installs the **TV launcher only**; use the Windows app with a paired TV to transfer your own game files before playing. Android and Fire OS compatibility remains experimental.
 
@@ -29,7 +31,7 @@ The latest startup changes are PC-tested and awaiting a TV retest. See the [meas
 
 ### Try it
 
-Download the Windows x64 EXE above and open it. Python is bundled; required Samsung tools and Node.js are downloaded and verified when needed. Internet access is required during setup.
+Download the Windows x64 EXE above and open it. Python is bundled; required Samsung tools, Node.js and the matching Android launcher are downloaded and verified only when needed. Internet access is required during setup.
 
 To run from source instead, install Python 3.12+ and run:
 

@@ -1,15 +1,9 @@
 # Windows x64 build: python -m PyInstaller --noconfirm Kart64TV.spec
 from pathlib import Path
-import PySide6,os,json,hashlib
+import PySide6,os
 
 project = Path(SPECPATH)
 qt = Path(PySide6.__file__).resolve().parent
-android_apk=Path(os.environ.get('KART64_ANDROID_APK',str(project/'assets'/'kart64-android.apk')))
-if android_apk.name.lower() != 'kart64-android.apk':
-    raise ValueError('The Android launcher input must be named kart64-android.apk so the bundled install path matches.')
-pin=json.loads((project/'assets'/'android-runtime.json').read_text())
-with android_apk.open('rb') as source:
-    if hashlib.file_digest(source,'sha256').hexdigest()!=pin['sha256']:raise ValueError('Rebuild the Android runtime or select the verified KART64_ANDROID_APK before packaging.')
 art=[(str(p),'assets') for p in (project/'assets').iterdir() if p.is_file() and p.name != 'kart64-master.png' and p.suffix.lower() in ('.png','.ico','.json')]
 legal=Path(os.environ.get('KART64_RELEASE_LEGAL',str(project/'build'/'release'/'legal')))
 notices=[(str(legal),'legal')] if legal.is_dir() else []
@@ -17,7 +11,7 @@ a = Analysis(
     [str(project / 'studio.py')],
     pathex=[],
     binaries=[(str(qt / 'VCRUNTIME140.dll'), '.'), (str(qt / 'VCRUNTIME140_1.dll'), '.')],
-    datas=[(str(project / 'src'), 'src'), (str(project / 'benchmark'), 'benchmark')]+art+[(str(android_apk),'assets')]+notices,
+    datas=[(str(project / 'src'), 'src'), (str(project / 'benchmark'), 'benchmark')]+art+notices,
     hiddenimports=[], hookspath=[], hooksconfig={}, runtime_hooks=[], excludes=[], noarchive=False,
 )
 # Windows supplies the unversioned ICU API used by Qt. A separate application on

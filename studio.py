@@ -1,5 +1,5 @@
 """Kart64 TV desktop dashboard. Uses the existing, tested installer workers."""
-import os,queue,sys,tempfile,threading,webbrowser,subprocess,json,shutil,hashlib
+import os,queue,sys,tempfile,threading,webbrowser,subprocess,json,shutil
 from pathlib import Path
 from PySide6.QtCore import Qt,QTimer,QSize
 from PySide6.QtGui import QPainter,QPainterPath,QPen,QColor,QFont,QIcon
@@ -15,6 +15,7 @@ from webos_core import prepare_webos_stage
 from installer_core import identify_game,prepare_rom
 from tools_core import prepare_tool
 from android_core import validate_android_serial,create_content_tar,classify_android_target,discover_android
+from android_runtime import prepare_android_runtime
 from uninstall import remove_app
 
 DOWNLOADER_CODE = '7989374'
@@ -126,9 +127,9 @@ class Engine(Installer):
             sdk=query(['shell','getprop','ro.build.version.sdk']);abis=query(['shell','getprop','ro.product.cpu.abilist'])
             target_platform=classify_android_target(features.stdout.decode(errors='replace'),sdk.stdout.decode(errors='replace'),abis.stdout.decode(errors='replace'))
             self.say(('Fire OS TV' if target_platform=='firetv' else 'Android / Google TV')+' target verified. Installation remains experimental.')
-            root=Path(__file__).resolve().parent;apk=root/'assets'/'kart64-android.apk';pin=json.loads((root/'assets'/'android-runtime.json').read_text())
-            with apk.open('rb') as source:digest=hashlib.file_digest(source,'sha256').hexdigest()
-            if digest!=pin['sha256']:raise ValueError('Android runtime failed its integrity check.')
+            root=Path(__file__).resolve().parent
+            cache=Path(os.environ.get('LOCALAPPDATA',str(Path.home())))/'Kart64TV'/'runtimes'
+            apk=prepare_android_runtime(abis.stdout.decode(errors='replace'),cache,progress=self.say)
             node=prepare_tool('node',self.tool_dir,progress=self.say)
             with tempfile.TemporaryDirectory(prefix='kart64-android-private-') as tmp:
                 tmp=Path(tmp);archive=Path(game)
@@ -367,9 +368,10 @@ def main():
         ctypes.windll.shell32.SetCurrentProcessExplicitAppUserModelID('Ticklect.Kart64TV')
     if sys.argv[1:]==['--self-test']:
         root=Path(__file__).resolve().parent
-        apk=root/'assets'/'kart64-android.apk'
         pin=json.loads((root/'assets'/'android-runtime.json').read_text())
-        return 0 if all((root/'benchmark'/n).is_file() for n in ('index.html','run.js','benchmark.js')) and (root/'src'/'build-runtime.cjs').is_file() and apk.is_file() and apk.stat().st_size==pin['size'] else 1
+        variants=pin['variants']
+        valid=all(abi in variants and variants[abi]['size']>0 and len(variants[abi]['sha256'])==64 and variants[abi]['url'].startswith('https://') for abi in ('arm64-v8a','armeabi-v7a','x86_64'))
+        return 0 if all((root/'benchmark'/n).is_file() for n in ('index.html','run.js','benchmark.js')) and (root/'src'/'build-runtime.cjs').is_file() and valid else 1
     if sys.argv[1:]==['--smoke-test']:
         app=QApplication(sys.argv);window=Studio(start_scan=False);window.show();app.processEvents()
         window.set_devices([{'ip':'10.0.0.2','brand':'Samsung','name':'Test TV','model':'Test model','supported':True}]);window.set_game('test.z64');window.navigate(1);app.processEvents()
