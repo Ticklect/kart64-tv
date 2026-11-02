@@ -1,26 +1,26 @@
 {
-  "version": "1.0.2-preview1",
+  "version": "1.0.2-preview2",
   "engine": "GeckoView 159.0.20261022150525",
   "variants": {
     "arm64-v8a": {
-      "url": "https://github.com/Ticklect/kart64-tv/releases/download/v1.0.2-preview1/Kart64TV-Android-TV-arm64-v8a.apk",
-      "size": 103693491,
-      "sha256": "fd2164df71d34104cb50789678ac0a852e2c77c5805af78fcde0a8f0f74a5698"
+      "url": "https://github.com/Ticklect/kart64-tv/releases/download/v1.0.2-preview2/Kart64TV-Android-TV-arm64-v8a.apk",
+      "size": 103700159,
+      "sha256": "12aef2e3b0bc69605fa80ef4d85225bb55de3f6f17093d259a62e0e8c73e9e40"
     },
     "armeabi-v7a": {
-      "url": "https://github.com/Ticklect/kart64-tv/releases/download/v1.0.2-preview1/Kart64TV-Android-TV-armeabi-v7a.apk",
-      "size": 98399997,
-      "sha256": "dffcfa5b9fea6f55660192ba220037c6345786d7569ad1047afeb061f329e6e5"
+      "url": "https://github.com/Ticklect/kart64-tv/releases/download/v1.0.2-preview2/Kart64TV-Android-TV-armeabi-v7a.apk",
+      "size": 98406665,
+      "sha256": "ac6e6434ff0227f31b3fa0dfdf69152e388d7ed0dd966df65ae41502d345e7ef"
     },
     "x86_64": {
-      "url": "https://github.com/Ticklect/kart64-tv/releases/download/v1.0.2-preview1/Kart64TV-Android-TV-x86_64.apk",
-      "size": 110492768,
-      "sha256": "4a36d456efdc9824d8364bcce8596c823629d1c37ffcfc813a72be1ea4a9670a"
+      "url": "https://github.com/Ticklect/kart64-tv/releases/download/v1.0.2-preview2/Kart64TV-Android-TV-x86_64.apk",
+      "size": 110499436,
+      "sha256": "efe7aa77b35ba54c62d8e63015cb4f58e1646b32ce6b382ad30813ff80dbe31e"
     }
   },
   "universal": {
-    "url": "https://github.com/Ticklect/kart64-tv/releases/download/v1.0.2-preview1/Kart64TV-Android-TV.apk",
-    "size": 267882556,
-    "sha256": "a58df3f05af492dc545b8a2518885f51491efdaa8511e2427e359183fc4c39b7"
+    "url": "https://github.com/Ticklect/kart64-tv/releases/download/v1.0.2-preview2/Kart64TV-Android-TV.apk",
+    "size": 267889228,
+    "sha256": "bccdbe28bc6fb311303f3e24fa86d16906958f36ff6e58bad514fba032aa41cc"
   }
 }

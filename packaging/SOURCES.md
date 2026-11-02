@@ -6,8 +6,8 @@ The experimental Android launcher includes Mozilla GeckoView 159.0.2026102215052
 
 ## Corresponding source
 
-- Application and Android launcher: https://github.com/Ticklect/kart64-tv/tree/v1.0.2-preview1
-- Qt, Qt SVG, Qt Image Formats, PySide6 and Shiboken6: the unmodified source archives in this release's `Kart64TV-1.0.2-preview1-DependencySources.zip`. Exact upstream URLs and SHA-256 values are in `dependency-sources.json`.
+- Application and Android launcher: https://github.com/Ticklect/kart64-tv/tree/v1.0.2-preview2
+- Qt, Qt SVG, Qt Image Formats, PySide6 and Shiboken6: the unmodified source archives in this release's `Kart64TV-1.0.2-preview2-DependencySources.zip`. Exact upstream URLs and SHA-256 values are in `dependency-sources.json`.
 - GeckoView: the unmodified Mozilla Firefox source revision recorded inside the shipped engine's build configuration: https://github.com/mozilla-firefox/firefox/tree/9a2dc53c369c7ae5172018b35988e1d2ffeff402 . Full source archive: https://github.com/mozilla-firefox/firefox/archive/9a2dc53c369c7ae5172018b35988e1d2ffeff402.tar.gz . Its third-party libraries, including the LGPL components, are in that source tree.
 - NanoHTTPD: https://github.com/NanoHttpd/nanohttpd/tree/nanohttpd-project-2.3.1
 - AndroidX: https://android.googlesource.com/platform/frameworks/support/

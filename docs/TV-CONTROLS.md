@@ -41,3 +41,8 @@ The loading screen shows actual startup marks from Kart64Boot, the runtime's sta
 For the opt-in browser integration check, install Playwright, prepare a private runtime directory and set `KART64_TEST_RUNTIME` to it, then run `node packaging/verify_tv_browser.cjs`. Optional `PLAYWRIGHT_MODULE` and `CHROMIUM_EXECUTABLE` select local tooling. The harness binds only to PC loopback and never sends game data to a remote server. Do not publish that directory.
 
 The new Android APK bundles the TV shell and augments the supported existing installed page in memory; upgrading the APK does not replace private game files or saves. Other platforms receive the shell when their package is rebuilt by the desktop installer. Physical-TV validation remains pending.
+
+
+## Second preview: interface redesign
+
+Preview 2 replaces the original form-style interface with a consistent navy/gold racing menu. Both controllers fit side by side with live diagrams, physical button highlights and stick movement. Bindings are grouped into Buttons, D-pad & clicks, and Sticks & deadzone. The sound screen has a real volume meter and selected render-scale cards. Focus remains on the chosen volume control after changing its value. Engine pause, safe exit, remapping persistence and disconnect protection retain their existing tests. Screenshots use simulated controller input; physical hardware validation is still pending.

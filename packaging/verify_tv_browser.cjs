@@ -45,10 +45,13 @@ async function main(){
   assert.equal(await p.evaluate(()=>Kart64TV.hub.profile(Kart64TV.hub.list()[0].key).buttons[0]),3);
   await p.getByRole('button',{name:'Back to controllers'}).click();
   await p.getByRole('button',{name:'Assign player 2',exact:true}).click();
+  assert.equal(await p.evaluate(()=>document.activeElement.textContent),'Assign player 3','Assignment focus must stay on the same controller');
   assert.equal(await p.evaluate(()=>navigator.getGamepads()[1].id),'Xbox Wireless Controller');
   await p.getByRole('button',{name:'Back',exact:true}).click();
   await p.getByRole('button',{name:'Sound & display'}).click();
   await p.getByRole('button',{name:'75% render scale',exact:true}).click();
+  await p.getByRole('button',{name:'Volume −'}).click();
+  await p.getByRole('button',{name:'Volume +',exact:true}).click();assert.equal(await p.evaluate(()=>document.activeElement.textContent.includes('Volume +')),true,'Volume controls must retain controller focus');
   await p.getByRole('button',{name:'Volume −'}).click();
   await p.getByRole('button',{name:'Back',exact:true}).click();
   await p.getByRole('button',{name:'Resume game',exact:true}).click();await p.waitForTimeout(400);

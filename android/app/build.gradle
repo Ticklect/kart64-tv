@@ -2,7 +2,7 @@ plugins { id 'com.android.application' }
 android {
     namespace 'com.ticklect.kart64'
     compileSdk 37
-    defaultConfig { applicationId 'com.ticklect.kart64'; minSdk 26; targetSdk 36; versionCode 7; versionName '1.0.2-preview1' }
+    defaultConfig { applicationId 'com.ticklect.kart64'; minSdk 26; targetSdk 36; versionCode 8; versionName '1.0.2-preview2' }
     splits {
         abi {
             enable true
