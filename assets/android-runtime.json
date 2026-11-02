@@ -1,26 +1,26 @@
 {
-  "version": "1.0.2-preview3",
+  "version": "1.0.2-preview4",
   "engine": "GeckoView 159.0.20261022150525",
   "variants": {
     "arm64-v8a": {
-      "url": "https://github.com/Ticklect/kart64-tv/releases/download/v1.0.2-preview3/Kart64TV-Android-TV-arm64-v8a.apk",
-      "size": 103693398,
-      "sha256": "d359fd343b8a6a9023c6316d17e8694d5620efbd57e5e3cb4542d451232bab0b"
+      "url": "https://github.com/Ticklect/kart64-tv/releases/download/v1.0.2-preview4/Kart64TV-Android-TV-arm64-v8a.apk",
+      "size": 103712420,
+      "sha256": "c33d7d24f4eb355481ceb0d98942316840a21db0bee0c9cfb3deade26e77182c"
     },
     "armeabi-v7a": {
-      "url": "https://github.com/Ticklect/kart64-tv/releases/download/v1.0.2-preview3/Kart64TV-Android-TV-armeabi-v7a.apk",
-      "size": 98399900,
-      "sha256": "3f07917057636a64f2cb1cb26f39fc75addb8fdb4a4c98f686a874756f95a503"
+      "url": "https://github.com/Ticklect/kart64-tv/releases/download/v1.0.2-preview4/Kart64TV-Android-TV-armeabi-v7a.apk",
+      "size": 98418926,
+      "sha256": "7d28e2ced24d2083491adae255afc5f7721f357264b876391d267afeed83df92"
     },
     "x86_64": {
-      "url": "https://github.com/Ticklect/kart64-tv/releases/download/v1.0.2-preview3/Kart64TV-Android-TV-x86_64.apk",
-      "size": 110492671,
-      "sha256": "a49f53156a18565d6a4ebf64aebca35470f1dbf61fbcb9c6ac023a6e0f1e3f93"
+      "url": "https://github.com/Ticklect/kart64-tv/releases/download/v1.0.2-preview4/Kart64TV-Android-TV-x86_64.apk",
+      "size": 110511697,
+      "sha256": "19edf69e23b51fc79cc8b060b55509130d7df6cedae04d36a88c568d543acf47"
     }
   },
   "universal": {
-    "url": "https://github.com/Ticklect/kart64-tv/releases/download/v1.0.2-preview3/Kart64TV-Android-TV.apk",
-    "size": 267882463,
-    "sha256": "113e9390bc0bd5676ea6dd0155cd8cf547c525f0076eb45802fabf4a11e0fb10"
+    "url": "https://github.com/Ticklect/kart64-tv/releases/download/v1.0.2-preview4/Kart64TV-Android-TV.apk",
+    "size": 267901489,
+    "sha256": "8070b1bb098b3ad285ca6efea5bbbb65dce31e7227f67bbc7119a5140f57c3a2"
   }
 }

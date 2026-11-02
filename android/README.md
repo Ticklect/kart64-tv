@@ -2,7 +2,7 @@
 
 This app embeds Mozilla GeckoView 159.0.20261022150525 and serves private local game files to that engine through a loopback-only server. It does not open a remote game website. The game files are supplied separately by the player. No ROM, extracted game archive or signing key belongs in this repository.
 
-The Android TV emulator installed the APK, opened the launcher, reported shared WebAssembly memory, WebGL2 and cross-origin isolation, accepted private game files and reached the Kart64 browser start page. A complete game boot, race, physical controllers, saves across restart and real-TV performance remain unverified. Browser gamepad API presence is not proof of physical controller support.
+The Android TV emulator installed the APK, opened the launcher, reported shared WebAssembly memory, WebGL2 and cross-origin isolation, accepted private game files and reached the Kart64 browser start page. Later controls previews reached engine-ready and opened the pause menu in the Android TV emulator. Race performance, physical controllers and real-TV behaviour remain unverified. Browser gamepad API presence is not proof of physical controller support.
 
 The earlier WebView experiment lacked shared memory support in the emulator. The shipping prototype uses GeckoView instead; version 1.0.1 compresses its native libraries and provides independent APKs per processor: ARM32 94 MiB, ARM64 99 MiB and x86-64 105 MiB. The optional universal APK is 255 MiB (previously 509 MiB). These are download sizes, excluding game files. Android extracts the selected native libraries during installation; installed storage is larger than the download. The manifest targets Android TV launcher discovery, supplies a banner and the custom icon, and does not require touch input. Minimum Android API is 26; this does not guarantee every Android 8+ TV can run the game.
 
@@ -32,3 +32,6 @@ The build writes `app-arm64-v8a-debug.apk`, `app-armeabi-v7a-debug.apk`, `app-x8
 ## TV controls preview
 
 Version `1.0.2-preview1` (code 7) adds the local TV shell, remapping, controller test, pause menu and boot-stage display. See [controls and validation](../docs/TV-CONTROLS.md). The APK upgrades the supported existing game page in memory and serves its own current shell assets; private game data is preserved. Android Back and lifecycle events use a token-protected local control endpoint. This is a prerelease; the stable Downloader link remains on 1.0.1 until hardware validation.
+
+
+Preview 4 adds native MK64 menu artwork and a sprite font prepared locally from your game archive. Existing installations need one game-content transfer from the updated Windows installer for those assets; the APK alone retains readable fallback text. No game artwork/fonts are bundled in the APK. See [native menus and validation](../docs/TV-CONTROLS.md#fourth-preview-original-game-menus).

@@ -10,9 +10,10 @@ Smaller Android downloads: [ARM64](https://github.com/Ticklect/kart64-tv/release
 
 **Install on Android / Google TV / Fire OS using Downloader (AFTVnews):** Open Downloader on your TV, enter code **`7989374`**, and press Go to download the Kart64 TV APK. You can also use [aftv.news/7989374](https://aftv.news/7989374). Allow Downloader to install the APK if your TV asks for permission. This installs the **TV launcher only**; use the Windows app with a paired TV to transfer your own game files before playing. Android and Fire OS compatibility remains experimental.
 
-**[TV controls preview](https://github.com/Ticklect/kart64-tv/releases/tag/v1.0.2-preview3)** — saved Xbox/PS5-layout bindings, controller testing, a pause menu and boot stages. [What is tested](docs/TV-CONTROLS.md). Physical-controller and real-TV checks remain pending.
+**[Original MK64 menus preview](https://github.com/Ticklect/kart64-tv/releases/tag/v1.0.2-preview4)** — original game artwork and font, saved controller bindings, pause menu and boot stages. Prepare your game once with this preview’s Windows app for the native skin. [What is tested](docs/TV-CONTROLS.md). Physical-controller and real-TV checks remain pending.
 
-![Kart64 TV installer](docs/screenshot.png)
+<p><img src="docs/tv-launcher.png" width="49%" alt="TV launcher with locally prepared MK64 artwork"><img src="docs/tv-pause.png" width="49%" alt="Kart64 TV pause menu over an actual race"></p>
+<sub>Actual app screens captured on PC. Original artwork/font are prepared locally from your game files.</sub>
 
 I started this to get Mario Kart 64 running directly on my Samsung TV. It worked, so I'm turning the setup into something other people can use.
 

@@ -1,4 +1,6 @@
 (async()=>{
+ for(const node of document.querySelectorAll('[data-native-text]'))Kart64Theme.label(node,node.textContent);
+ Kart64Theme.load('../game/tv-game-theme.css');
  let shared=false;try{shared=new WebAssembly.Memory({initial:1,maximum:2,shared:true}).buffer instanceof SharedArrayBuffer}catch(e){}
  const gl=!!document.createElement('canvas').getContext('webgl2');
  const result={sharedWasm:shared,webgl2:gl,isolated:crossOriginIsolated,gamepads:typeof navigator.getGamepads==='function'};
@@ -14,9 +16,9 @@
  addEventListener('keydown',e=>{if(['ArrowUp','ArrowDown','ArrowLeft','ArrowRight'].includes(e.key)){e.preventDefault();(document.activeElement===play?controls:play).focus();}});
  let held=false;
  function tick(){let pads=[];try{pads=Array.from(navigator.getGamepads()||[]).filter(Boolean)}catch(e){}
-  document.getElementById('pads').textContent=pads.length?'Connected: '+pads.map(p=>p.id).join(' · '):'Waiting for a controller…';
+  document.getElementById('pads').textContent=pads.length?pads.length+' controller'+(pads.length===1?'':'s')+' ready · '+pads.map(p=>Kart64Controls.buttonName(p.id,0)==='Cross'?'PlayStation':/xbox|xinput/i.test(p.id)?'Xbox':'Gamepad').join(' / '):'Waiting for a controller…';
   const p=pads.find(p=>p.buttons.some(b=>b.pressed)||p.axes.some(a=>Math.abs(a)>.6));
-  if(p&&!held){if(p.buttons[12]?.pressed||p.buttons[13]?.pressed||Math.abs(p.axes[1])>.6)(document.activeElement===play?controls:play).focus();else if(p.buttons[0]?.pressed)document.activeElement?.click();}
+  if(p&&!held){if(p.buttons[12]?.pressed||p.buttons[13]?.pressed||p.buttons[14]?.pressed||p.buttons[15]?.pressed||Math.abs(p.axes[0])>.6||Math.abs(p.axes[1])>.6)(document.activeElement===play?controls:play).focus();else if(p.buttons[0]?.pressed)document.activeElement?.click();}
   held=!!p;requestAnimationFrame(tick);
  }requestAnimationFrame(tick);
 })();

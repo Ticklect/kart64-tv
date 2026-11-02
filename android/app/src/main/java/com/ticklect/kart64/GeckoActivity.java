@@ -60,7 +60,7 @@ public final class GeckoActivity extends Activity {
                     control.addHeader("Cache-Control","no-store");return control;
                 }
                 InputStream body;long size;
-                if(path.equals("game/tv-controls.js")||path.equals("game/tv-engine.js")||path.equals("game/tv-shell.js")||path.equals("game/tv-shell.css")){
+                if(path.equals("game/tv-theme.js")||path.equals("game/tv-controls.js")||path.equals("game/tv-engine.js")||path.equals("game/tv-shell.js")||path.equals("game/tv-shell.css")){
                     ByteArrayOutputStream bytes=new ByteArrayOutputStream();try(InputStream in=getAssets().open(path.substring(5))){byte[] b=new byte[8192];int n;while((n=in.read(b))!=-1)bytes.write(b,0,n);}byte[] content=bytes.toByteArray();body=new ByteArrayInputStream(content);size=content.length;
                 }
                 else if(path.startsWith("assets/")){

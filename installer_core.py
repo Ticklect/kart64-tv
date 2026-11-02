@@ -31,19 +31,22 @@ def validate_archive(file):
     return file
 
 def make_package(stage,archive,output):
+    from game_theme import build_game_theme
     stage,output=Path(stage),Path(output);archive=validate_archive(archive)
-    required=('config.xml','index.html','Spaghettify.js','Spaghettify.wasm','diagnostics.js','packaged-boot.js','tv-controls.js','tv-engine.js','tv-shell.js','tv-shell.css')
+    required=('config.xml','index.html','Spaghettify.js','Spaghettify.wasm','diagnostics.js','packaged-boot.js','tv-controls.js','tv-engine.js','tv-shell.js','tv-shell.css','tv-theme.js')
     if not all((stage/n).is_file() for n in required): raise ValueError('Incomplete runtime package.')
     if output.exists(): raise ValueError('Package output already exists.')
     files=sorted(stage.rglob('*'))
     if any(p.is_symlink() for p in files): raise ValueError('Runtime contains a symbolic link.')
-    if any(p.name in ('mk64.o2r','author-signature.xml','signature1.xml') for p in files): raise ValueError('Unexpected game data or signature in runtime.')
+    if any(p.name in ('mk64.o2r','tv-game-theme.css','author-signature.xml','signature1.xml') for p in files): raise ValueError('Unexpected game data or signature in runtime.')
+    theme=build_game_theme(archive)
     with zipfile.ZipFile(output,'x',allowZip64=True) as z:
         for p in files:
             if p.is_file():
                 compression=zipfile.ZIP_STORED if p.suffix in ('.wasm','.o2r') else zipfile.ZIP_DEFLATED
                 z.write(p,p.relative_to(stage).as_posix(),compress_type=compression)
         z.write(archive,'mk64.o2r',compress_type=zipfile.ZIP_STORED)
+        if theme:z.writestr('tv-game-theme.css',theme.encode('utf-8'),compress_type=zipfile.ZIP_DEFLATED)
     with zipfile.ZipFile(output) as z:
         if z.testzip() is not None: raise ValueError('Package verification failed.')
     return output

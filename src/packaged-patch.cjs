@@ -21,9 +21,10 @@ function skipExtractionPreload(source){
 }
 
 function patchPackagedStartup(html){
+ html=replaceOnce(html,'</head>','<style id="k64-boot-cover">#overlay{visibility:hidden!important}body:not(.k64-tv-app)::after{content:"Opening Kart64 TV...";position:fixed;inset:0;display:grid;place-items:center;background:#16211a;color:#e4edac;font:700 22px Arial;z-index:40000}</style></head>');
  html=replaceOnce(html,"const touchDevice = navigator.maxTouchPoints > 0 || qp.has('touch');",'const touchDevice = false;');
  html=replaceOnce(html,"  const touchable = navigator.maxTouchPoints > 0 || qp.has('touch');",'  const touchable = false;');
- html=replaceOnce(html,'<script>\nconst ROM_SHA1', '<script src="packaged-boot.js"></script>\n<link rel="stylesheet" href="tv-shell.css">\n<script src="tv-controls.js"></script>\n<script src="tv-engine.js"></script>\n<script src="tv-shell.js"></script>\n<script>\nconst ROM_SHA1');
+ html=replaceOnce(html,'<script>\nconst ROM_SHA1', '<script src="packaged-boot.js"></script>\n<link rel="stylesheet" href="tv-shell.css">\n<script src="tv-controls.js"></script>\n<script src="tv-engine.js"></script>\n<script src="tv-theme.js"></script>\n<script src="tv-shell.js"></script>\n<script>\nconst ROM_SHA1');
  html=replaceOnce(html,'  statusEl.textContent = t;', '  globalThis.Kart64TV?.loadingMessage(t, bad);\n  statusEl.textContent = t;');
  html=replaceOnce(html,"  const r = await fetch(name);\n  if (!r.ok) throw new Error(name + ': HTTP ' + r.status);\n  FS.writeFile('/data/' + name, new Uint8Array(await r.arrayBuffer()), {canOwn:true});", "  const bytes = await Kart64Boot.readAsset(name);\n  FS.writeFile('/data/' + name, new Uint8Array(bytes), {canOwn:true});");
  html=replaceOnce(html,"await fetch('courses.json', { cache: 'no-cache' })","await Kart64Boot.fetchInstalled('courses.json', { cache: 'no-cache' })");

@@ -18,6 +18,11 @@ async function main(){
  await new Promise(resolve=>server.listen(0,'127.0.0.1',resolve));
  const browser=await chromium.launch({executablePath:process.env.CHROMIUM_EXECUTABLE||undefined,args:['--enable-unsafe-swiftshader','--autoplay-policy=no-user-gesture-required']});
  try{
+  const firstPaint=await browser.newPage({javaScriptEnabled:false});
+  await firstPaint.goto('http://127.0.0.1:'+server.address().port+'/game/index.html');
+  assert.equal(await firstPaint.locator('#overlay').isVisible(),false,'Legacy browser setup must stay hidden before JavaScript loads');
+  assert.ok(await firstPaint.evaluate(()=>getComputedStyle(document.body,'::after').content.includes('Opening Kart64 TV')));
+  await firstPaint.close();
   const p=await browser.newPage({viewport:{width:1280,height:720}}),errors=[];p.on('pageerror',e=>errors.push(e.message));
   await p.addInitScript(()=>{
    const pad=(index,id)=>({id,index,mapping:'standard',connected:true,timestamp:1,buttons:Array.from({length:17},()=>({pressed:false,touched:false,value:0})),axes:[0,0,0,0]});
@@ -30,8 +35,13 @@ async function main(){
   await p.waitForFunction(()=>!document.getElementById('k64-loading').hidden);
   await p.waitForFunction(()=>window.Kart64TV?.ready,{timeout:180000});
   assert.equal(await p.evaluate(()=>Kart64TV.hub.list().length),2);
+  if(fs.existsSync(path.join(base,'tv-game-theme.css'))) await p.waitForFunction(()=>document.body.classList.contains('k64-native-theme'));
   assert.equal(await p.evaluate(()=>document.body.classList.contains('touch')),false);
+  assert.equal(await p.locator('#overlay').isVisible(),false,'Legacy browser setup must not cover the TV launcher/game');
+  assert.equal(await p.locator('#k64-menu-button').evaluate(n=>getComputedStyle(n).opacity),'0','HUD hints stay hidden during controller-only play');
   await p.keyboard.press('Escape');await p.waitForFunction(()=>Kart64TV.open);
+  assert.ok(await p.locator('#k64-tv h1 .tv-game-text').count(),'Headings use the native text renderer');
+  assert.equal(await p.getByRole('button',{name:'Resume game',exact:true}).textContent(),'Resume game','Native glyphs must not duplicate accessible or DOM text');
   pendingControl={back:true};await p.waitForTimeout(500);assert.equal(await p.evaluate(()=>Kart64TV.open),true,'Native Back plus browser Back must never resume the game');
   await p.waitForTimeout(150);const swaps=await p.evaluate(()=>window.__kartFrameSwaps);await p.waitForTimeout(400);
   assert.equal(await p.evaluate(()=>window.__kartFrameSwaps),swaps,'Game must actually stop while the menu is open');
@@ -83,11 +93,26 @@ async function main(){
   assert.equal(await p.evaluate(()=>Kart64TV.engine.paused()),true);
   await p.evaluate(()=>{FS.syncfs=window.__sync;FS.writeFile('/data/tv-shell-browser-check.bin',new Uint8Array([8,6,4,2]));});
   await p.getByRole('button',{name:'Save & exit'}).click();await p.waitForURL('**/assets/launch.html');
-  await p.locator('#start').click();await p.waitForFunction(()=>Kart64TV?.ready,{timeout:180000});
+  await p.getByRole('button',{name:'Play game',exact:true}).click();await p.waitForFunction(()=>Kart64TV?.ready,{timeout:180000});
   assert.deepEqual(await p.evaluate(()=>Array.from(FS.readFile('/data/tv-shell-browser-check.bin'))),[8,6,4,2]);
   assert.equal(await p.evaluate(()=>Kart64TV.hub.profile(Kart64TV.hub.list()[0].key).buttons[0]),3);
   await p.evaluate(async()=>{FS.unlink('/data/tv-shell-browser-check.bin');await Kart64TV.engine.flush();});
   assert.deepEqual(errors,[]);
+  const plain=await browser.newPage({viewport:{width:1280,height:720}});
+  await plain.route('**/tv-game-theme.css*',route=>route.abort());
+  await plain.goto('http://127.0.0.1:'+server.address().port+'/game/index.html');
+  await plain.getByRole('button',{name:'Play game',exact:true}).waitFor({timeout:3000});
+  await plain.getByRole('button',{name:'Play game',exact:true}).focus();
+  await plain.keyboard.press('ArrowRight');await plain.keyboard.press('Enter');
+  await plain.getByRole('heading',{name:'Controller select'}).waitFor();
+  await plain.getByRole('button',{name:'Back',exact:true}).click();
+  await plain.getByRole('button',{name:'Back to game setup',exact:true}).click();
+  await plain.getByRole('button',{name:'Play game',exact:true}).click();
+  await plain.waitForFunction(()=>Kart64TV.ready,{timeout:180000});await plain.keyboard.press('Escape');
+  assert.equal(await plain.evaluate(()=>document.body.classList.contains('k64-native-theme')),false);
+  assert.equal(await plain.getByRole('button',{name:'Resume game',exact:true}).isVisible(),true,'Missing optional artwork must leave a working menu');
+  assert.equal(await plain.locator('#k64-tv .tv-game-text').first().isVisible(),false);
+  await plain.close();
   const failed=await browser.newPage();await failed.route('**/Spaghettify.js',route=>route.abort());
   await failed.goto('http://127.0.0.1:'+server.address().port+'/game/index.html?autostart=1');
   const retry=failed.getByRole('button',{name:'Retry startup',exact:true});await retry.waitFor();

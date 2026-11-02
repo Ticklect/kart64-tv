@@ -2,7 +2,7 @@ plugins { id 'com.android.application' }
 android {
     namespace 'com.ticklect.kart64'
     compileSdk 37
-    defaultConfig { applicationId 'com.ticklect.kart64'; minSdk 26; targetSdk 36; versionCode 9; versionName '1.0.2-preview3' }
+    defaultConfig { applicationId 'com.ticklect.kart64'; minSdk 26; targetSdk 36; versionCode 10; versionName '1.0.2-preview4' }
     splits {
         abi {
             enable true
@@ -23,7 +23,7 @@ dependencies {
 }
 
 tasks.register('syncTvAssets', Sync) {
-    from('../../src') { include 'tv-controls.js', 'tv-engine.js', 'tv-shell.js', 'tv-shell.css' }
+    from('../../src') { include 'tv-controls.js', 'tv-engine.js', 'tv-shell.js', 'tv-shell.css', 'tv-theme.js' }
     into(layout.buildDirectory.dir('generated/tvAssets'))
 }
 tasks.named('preBuild').configure { dependsOn('syncTvAssets') }

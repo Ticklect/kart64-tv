@@ -3,7 +3,7 @@ from pathlib import Path
 import json,shutil,struct,zlib
 from installer_core import validate_archive
 
-FILES=('index.html','Spaghettify.js','Spaghettify.wasm','spaghetti.o2r','courses.json','courses/silverstone/silverstone-v1.9.o2r','diagnostics.js','packaged-boot.js','tv-controls.js','tv-engine.js','tv-shell.js','tv-shell.css')
+FILES=('index.html','Spaghettify.js','Spaghettify.wasm','spaghetti.o2r','courses.json','courses/silverstone/silverstone-v1.9.o2r','diagnostics.js','packaged-boot.js','tv-controls.js','tv-engine.js','tv-shell.js','tv-shell.css','tv-theme.js')
 
 def make_icon(size):
     rows=[]
@@ -18,6 +18,7 @@ def make_icon(size):
     return b'\x89PNG\r\n\x1a\n'+chunk(b'IHDR',struct.pack('>IIBBBBB',size,size,8,6,0,0,0))+chunk(b'IDAT',zlib.compress(b''.join(rows)))+chunk(b'IEND',b'')
 
 def prepare_webos_stage(runtime,archive,output):
+    from game_theme import build_game_theme
     runtime,output=Path(runtime),Path(output)
     if not output.is_dir() or output.is_symlink() or any(output.iterdir()):raise ValueError('Choose a new empty output directory.')
     if not runtime.is_dir() or runtime.is_symlink():raise ValueError('Runtime directory is missing.')
@@ -30,6 +31,8 @@ def prepare_webos_stage(runtime,archive,output):
     for name in FILES:
         src=runtime.joinpath(*name.split('/'));dest=output.joinpath(*name.split('/'));dest.parent.mkdir(parents=True,exist_ok=True);shutil.copyfile(src,dest)
     shutil.copyfile(archive,output/'mk64.o2r')
+    theme=build_game_theme(archive)
+    if theme:(output/'tv-game-theme.css').write_bytes(theme.encode('utf-8'))
     assets=Path(__file__).resolve().parent/'assets'
     shutil.copyfile(assets/'kart64-80.png',output/'icon.png');shutil.copyfile(assets/'kart64-130.png',output/'largeIcon.png')
     info={'id':'com.ticklect.kart64','version':'1.0.0','vendor':'Ticklect','type':'web','main':'index.html','title':'Kart64 TV','icon':'icon.png','largeIcon':'largeIcon.png','iconColor':'#1e3887','requiredACG':[]}

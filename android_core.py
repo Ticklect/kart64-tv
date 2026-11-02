@@ -30,13 +30,19 @@ def parse_adb_devices(text):
     return result
 
 def create_content_tar(runtime,archive,output):
+    from game_theme import build_game_theme
     runtime,output=Path(runtime),Path(output);archive=validate_archive(archive)
     for name in FILES:
         src=runtime/name
         if not src.is_file() or src.is_symlink() or runtime.resolve() not in src.resolve().parents:raise ValueError('Missing or unsafe runtime file.')
+    theme=build_game_theme(archive)
     with tarfile.open(output,'x') as tar:
         for name in FILES:tar.add(runtime/name,arcname=name,recursive=False)
         tar.add(archive,arcname='mk64.o2r',recursive=False)
+        # Extraction preserves private files, so explicitly replace any older skin.
+        payload=(theme or 'body{--mk-theme-version:0;}\n').encode('utf-8')
+        info=tarfile.TarInfo('tv-game-theme.css');info.size=len(payload)
+        tar.addfile(info,io.BytesIO(payload))
     return output
 
 def discover_android():

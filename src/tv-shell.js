@@ -1,6 +1,11 @@
 (function(root){
 'use strict';
 const C=root.Kart64Controls,engine=root.Kart64Engine.createEngine();
+root.Kart64Theme?.load('tv-game-theme.css');
+const qp=new URLSearchParams(location.search);let skipHome=qp.has('autostart')||qp.has('setup');
+document.body.classList.add('k64-tv-app');
+let pointerTimer;
+root.addEventListener('pointermove',()=>{document.body.classList.add('k64-pointer-controls');clearTimeout(pointerTimer);pointerTimer=setTimeout(()=>document.body.classList.remove('k64-pointer-controls'),4000);},{passive:true});
 let storage;try{storage=root.localStorage;}catch(e){}
 const hub=C.createHub({storage});
 const nativePads=navigator.getGamepads?.bind(navigator)||(()=>[]);
@@ -10,19 +15,28 @@ let prestartArmed=false;
 let ready=false,open=false,page='main',capture=null,bootAt=null,bootMessage='',bootError=false,gamepadHeld=false,navAt=0,lastPanelPaint=0,exiting=false;
 let settings={volume:1,resolution:1};
 try{const s=JSON.parse(storage?.getItem('kart64.tv.settings.v1')||'{}');if(Number.isFinite(s.volume)&&s.volume>=0&&s.volume<=1)settings.volume=s.volume;if([.5,.75,1].includes(s.resolution))settings.resolution=s.resolution;}catch(e){}
-const el=(tag,text,cls)=>{const n=document.createElement(tag);if(text)n.textContent=text;if(cls)n.className=cls;return n;};
+const el=(tag,text,cls)=>{const n=document.createElement(tag);if(text){if(['h1','h2'].includes(tag)&&root.Kart64Theme)root.Kart64Theme.label(n,text);else n.textContent=text;}if(cls)n.className=cls;return n;};
 const menu=el('section');menu.id='k64-tv';menu.hidden=true;menu.setAttribute('role','dialog');menu.setAttribute('aria-modal','true');menu.setAttribute('aria-label','Kart64 TV menu');
 const panel=el('div',null,'tv-panel');menu.append(panel);document.body.append(menu);
 const loading=el('section');loading.id='k64-loading';loading.hidden=true;loading.setAttribute('aria-label','Game loading');
-loading.append(el('h1','Ready. Set. Race.'),el('div',null,'tv-track'));
+loading.append(el('h1','Getting ready'),el('div',null,'tv-track'));
 const loadTitle=el('p','Starting the game…'),loadTime=el('p'),loadNote=el('p','Keep this screen open. First launch may take a little longer.'),loadMarks=el('ol');loadNote.className='tv-note';loading.append(loadTitle,loadTime,loadNote,loadMarks);
 const retry=el('button','Retry startup');retry.hidden=true;retry.onclick=()=>location.reload();loading.append(retry);document.body.append(loading);
 const launchButton=el('button','Controllers & TV menu');launchButton.id='k64-menu-button';launchButton.onclick=()=>show('main');document.body.append(launchButton);
+const home=el('section');home.id='k64-home';home.hidden=skipHome;home.setAttribute('aria-label','Kart64 TV launcher');
+const homeTop=el('div',null,'tv-home-topline');homeTop.append(el('span','KART64 TV'),el('span','Community TV edition'));
+const homeLogo=el('div',null,'tv-home-logo');homeLogo.setAttribute('role','img');homeLogo.setAttribute('aria-label','Mario Kart 64');homeLogo.append(el('strong','KART64 TV'));
+const homeState=el('p','Checking the game…','tv-home-status');homeState.setAttribute('role','status');
+const homeActions=el('div',null,'tv-home-actions');
+const homePlay=button(homeActions,'Play game',startGame,true);homePlay.disabled=true;
+const homeControls=button(homeActions,'Controllers',()=>show('controllers'));
+home.append(homeTop,homeLogo,el('h1','Game select'),homeState,homeActions,el('p','D-pad to move · A / Cross or TV OK to select','tv-home-help'),el('p','Pair controllers in your TV settings, then press a button.','tv-home-help'),el('p','Kart64 by Edd Mann · SpaghettiKart by Harbour Masters','tv-home-credit'));
+document.body.append(home);
 const heldKeys=new Map();
 let alertNode=null,liveNodes=new Map(),previousVirtual=Array(4).fill(null);
 function notice(message){if(alertNode)alertNode.textContent=message;}
 function safely(fn){return ()=>{try{fn();}catch(e){notice(e.message);}};}
-function button(parent,label,fn,primary=false){const b=el('button',label,primary?'tv-primary':'');b.type='button';b.setAttribute('aria-label',label);b.dataset.action=label;b.onclick=safely(fn);parent.append(b);return b;}
+function button(parent,label,fn,primary=false){const b=el('button',label,primary?'tv-primary':'');b.type='button';b.setAttribute('aria-label',label);root.Kart64Theme?.label(b,label);b.dataset.action=label;b.onclick=safely(fn);parent.append(b);return b;}
 function focusFirst(preferred){panel.scrollTop=0;const buttons=[...panel.querySelectorAll('button:not(:disabled)')];(buttons.find(b=>b.dataset.action===preferred)||buttons[0])?.focus();}
 function pageHeader(title){
  const top=el('div',null,'tv-topline');top.append(el('span','KART64 TV','tv-brand'),el('span',ready?'Game paused':'Controller setup','tv-status'));panel.append(top,el('h1',title));
@@ -43,6 +57,12 @@ function updateDiagram(svg,p){
  for(const node of svg.querySelectorAll('[data-stick]')){const i=+node.dataset.stick;node.setAttribute('cx',(i?255:145)+(p.axes[i*2]||0)*11);node.setAttribute('cy',116+(p.axes[i*2+1]||0)*11);}
 }
 function saveSettings(){try{storage?.setItem('kart64.tv.settings.v1',JSON.stringify(settings));}catch(e){notice('Settings apply for this session but could not be saved.');}}
+function startGame(){
+ const start=document.getElementById('start');
+ if(!start||start.classList.contains('hidden')||typeof start.onclick!=='function')return;
+ home.hidden=true;skipHome=true;start.click();
+}
+function homeFocusNext(){const choices=[homePlay,homeControls].filter(b=>!b.disabled);choices[(choices.indexOf(document.activeElement)+1)%choices.length]?.focus();}
 function show(next='main',reason=''){
  if(exiting){notice('Saving… please wait before leaving this screen.');return false;}
  if(ready&&!engine.paused()){
@@ -56,15 +76,16 @@ function closeMenu(){
  if(hub.missing().length){notice('A player controller is disconnected. Reconnect it, or choose Continue with connected controllers.');return;}
  capture=null;
  try{engine.resume();}catch(e){notice('Could not resume: '+e.message);return;}
- hub.acknowledge();hub.setBlocked(false);open=false;menu.hidden=true;prestartArmed=false;(ready?document.getElementById('canvas'):document.getElementById('start'))?.focus();
+ hub.acknowledge();hub.setBlocked(false);open=false;menu.hidden=true;prestartArmed=false;
+ if(ready)document.getElementById('canvas')?.focus();else{skipHome=false;home.hidden=false;homePlay.focus();}
 }
 function render(reason=''){
  const preferred=panel.dataset.page===page?document.activeElement?.dataset.action:null;
- capture=null;liveNodes=new Map();panel.replaceChildren();panel.dataset.page=page;
- pageHeader(({main:'Pause',controllers:'Controller select',settings:'Sound & display',exit:'Leave this game?'})[page]||'Kart64 TV');
+ capture=null;liveNodes=new Map();panel.replaceChildren();panel.dataset.page=page;menu.dataset.page=page;
+ pageHeader(({main:ready?'Game paused':'TV options',controllers:'Controller select',settings:'Sound & display',exit:'Leave this game?'})[page]||'Kart64 TV');
  alertNode=el('p',reason,'tv-alert');alertNode.setAttribute('role','status');panel.append(alertNode);
  if(page==='main'){
-  panel.append(el('p',ready?'Take a breather. Your game is paused.':'Set up your controllers, then head to the starting grid.','tv-note'));
+  if(!ready)panel.append(el('p','Set up your controllers, then head to the starting grid.','tv-note'));
   const grid=el('div',null,'tv-menu-grid');panel.append(grid);
   button(grid,ready?'Resume game':'Back to game setup',closeMenu,true);
   button(grid,'Controllers & bindings',()=>show('controllers'));
@@ -79,7 +100,7 @@ function render(reason=''){
   if(!list.some(p=>p.connected))panel.append(el('p','No controller detected. Pair Xbox or PS5 in TV settings, then press a button.'));
   const controllerGrid=el('div',null,'tv-controllers-grid');panel.append(controllerGrid);
   for(const r of list){
-   const card=el('div',null,'tv-card');controllerGrid.append(card);card.append(el('h2',r.connected?(r.slot===null?'Unassigned':'Player '+(r.slot+1)):'Disconnected'),el('p',r.id,'tv-controller-name'));
+   const card=el('div',null,'tv-card');card.dataset.player=r.slot===null?'unassigned':String(r.slot);controllerGrid.append(card);card.append(el('h2',r.connected?(r.slot===null?'Unassigned':'Player '+(r.slot+1)):'Disconnected'),el('p',r.id,'tv-controller-name'));
    if(!r.connected)continue;
    const diagram=controllerDiagram(r.id);card.append(diagram);
    const live=el('p','Waiting for input…','tv-live');card.append(live);liveNodes.set(r.key,{node:live,diagram});
@@ -124,7 +145,7 @@ let bindingGroup='buttons';
 function renderBindings(key){
  const r=hub.list().find(x=>x.key===key);if(!r?.connected){show('controllers');return;}
  const preferred=panel.dataset.page==='bindings'?document.activeElement?.dataset.action:null;
- page='bindings';capture=null;panel.replaceChildren();panel.dataset.page=page;pageHeader('Controller bindings');
+ page='bindings';capture=null;panel.replaceChildren();panel.dataset.page=page;menu.dataset.page=page;pageHeader('Controller bindings');
  panel.append(el('p',r.id,'tv-controller-name'));
  const tabs=el('div',null,'tv-tabs');panel.append(tabs);
  for(const [group,label] of [['buttons','Buttons'],['extras','D-pad & clicks'],['sticks','Sticks & deadzone']]){const tab=button(tabs,label,()=>{bindingGroup=group;renderBindings(key);});tab.setAttribute('aria-pressed',String(bindingGroup===group));}
@@ -154,6 +175,11 @@ function keydown(e){
   e.preventDefault();e.stopImmediatePropagation();if(e.repeat)return;
   backAction();return;
  }
+ if(!open&&!home.hidden){
+  if(['ArrowDown','ArrowRight','ArrowUp','ArrowLeft','Tab'].includes(e.key)){e.preventDefault();homeFocusNext();}
+  if((e.key==='Enter'||e.key===' ')&&!e.repeat){e.preventDefault();document.activeElement?.click();}
+  return;
+ }
  if(!open){heldKeys.set(e.code,{key:e.key,code:e.code,keyCode:e.keyCode,which:e.which});return;}
  e.preventDefault();e.stopImmediatePropagation();if(capture)return;
  if(['ArrowDown','ArrowRight','Tab'].includes(e.key))moveFocus(e.shiftKey?-1:1);
@@ -177,7 +203,10 @@ function tick(t){
  const pads=raw.filter(Boolean);
  if(!ready&&!open&&!bootAt){
   if(!pads.some(p=>p.buttons.some(b=>b.pressed)))prestartArmed=true;
-  else if(prestartArmed&&pads.some(p=>p.buttons[0]?.pressed||p.buttons[9]?.pressed)){prestartArmed=false;document.getElementById('start')?.click();}
+  else if(prestartArmed&&pads.some(p=>p.buttons[0]?.pressed||p.buttons[9]?.pressed)){
+   prestartArmed=false;navAt=t+180;if(home.hidden)startGame();else (document.activeElement===homeControls?homeControls:homePlay).click();
+  }
+  if(!home.hidden&&t-navAt>220&&pads.some(p=>[12,13,14,15].some(i=>p.buttons[i]?.pressed)||p.axes.some(a=>Math.abs(a)>.65))){homeFocusNext();navAt=t;}
  }
  const chord=pads.some(p=>p.buttons[8]?.pressed&&p.buttons[9]?.pressed);
  if(chord&&!gamepadHeld){if(cancelCapture()){}else if(!open&&(ready||!bootAt))show('main');}
@@ -208,6 +237,13 @@ let settingsApplied=false;
 setInterval(()=>{
  const marks=root.Kart64Boot?.snapshot()||[];
  if(marks.length&&!bootAt){bootAt=performance.now();document.body.classList.add('k64-booting');}
+ const wasHidden=home.hidden;home.hidden=skipHome||ready||open||!!bootAt;
+ if(!home.hidden){
+  const start=document.getElementById('start');const disabled=!start||start.classList.contains('hidden')||typeof start.onclick!=='function';
+  const becameReady=homePlay.disabled&&!disabled;homePlay.disabled=disabled;
+  homeState.textContent=bootError?bootMessage:disabled?'Checking the game…':'Ready to race.';
+  if(wasHidden||(becameReady&&!home.contains(document.activeElement)))homePlay.focus();
+ }
  if(marks.some(m=>m.name==='engine-ready')&&!ready){
   ready=true;hub.arm();if(open)engine.pause();loading.hidden=true;document.body.classList.remove('k64-booting');launchButton.textContent='TV menu · Back / View + Menu';
  }
@@ -220,13 +256,12 @@ setInterval(()=>{
 let polling=false;
 async function hostControl(){
  if(!location.pathname.includes('/game/')||polling)return;polling=true;
- try{const r=await fetch('../control',{cache:'no-store'});if(r.ok){const command=await r.json();if(command.pause&&ready)show('main','Paused while the app was in the background.');else if(command.back)show('main','Paused by the TV remote.');}}catch(e){}finally{polling=false;}
+ try{const r=await fetch('../control',{cache:'no-store'});if(r.ok){const command=await r.json();if(command.pause&&ready)show('main','Paused while the app was in the background.');else if(command.back)show('main',ready?'Paused by the TV remote.':'');}}catch(e){}finally{polling=false;}
 }
 setInterval(hostControl,200);
 document.addEventListener('visibilitychange',()=>{if(ready&&document.hidden)show('main','Paused while the app is in the background.');if(!document.hidden)hostControl();});
 root.addEventListener('blur',()=>{if(ready&&!open)show('main','Paused because the app lost focus.');});
-root.Kart64TV={hub,engine,show,loadingMessage(message,bad){bootMessage=message;bootError=!!bad;},get ready(){return ready;},get open(){return open;}};
-const qp=new URLSearchParams(location.search);
+root.Kart64TV={hub,engine,show,loadingMessage(message,bad){bootMessage=message;bootError=!!bad;if(bad&&!bootAt&&!(root.Kart64Boot?.snapshot?.()||[]).length)skipHome=false;},get ready(){return ready;},get open(){return open;}};
 if(qp.has('setup'))show('controllers');
 if(qp.has('autostart')){const timer=setInterval(()=>{const b=document.getElementById('start');if(b&&!b.classList.contains('hidden')){clearInterval(timer);b.click();}},100);}
 })(window);

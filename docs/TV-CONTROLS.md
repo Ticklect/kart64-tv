@@ -33,7 +33,7 @@ The loading screen shows actual startup marks from Kart64Boot, the runtime's sta
 
 ## Validation
 
-- 116 automated checks: 71 Python (including a compiled Java page-upgrade check) and 45 Node.
+- 123 automated checks: 78 Python (including a compiled Java page-upgrade check) and 45 Node.
 - Real PC browser game boot with owned private game data: engine pause stops buffer swaps; resume restarts them. Synthetic Xbox/PS5 raw input exercises remapping, menu navigation independent of bindings, player assignment, sound gain, render scale, disconnect/reconnect, save-error exit protection and a saved-file round trip.
 - Android TV API 36 x86-64 emulator: APK installs/updates, private files survive, game reaches engine-ready, Back opens the TV pause menu, and D-pad/OK reaches controller setup. These checks do not establish race visuals, physical controller behaviour or Android-TV performance.
 - No physical TV was accessed for this preview.
@@ -53,3 +53,17 @@ Preview 2 replaces the original form-style interface with a consistent navy/gold
 Preview 3 applies a stronger Mario Kart 64-inspired menu style to the TV launcher, loading screen, pause menu, controller setup, bindings, sound/display and exit confirmation. Bright blue frames, orange/yellow outlined headings, bevelled buttons, selection arrows and original CSS chequered artwork replace the navy/gold dashboard styling. No Nintendo artwork or fonts are bundled. No extra image downloads or game changes are involved.
 
 The 1280 × 720 launcher and standard menu pages fit their main controls without scrolling. The PC browser game integration checks are rerun with synthetic Xbox/PS5 inputs. These are real app screenshots on PC, not TV captures. The earlier Android emulator checks above apply to Preview 1; Preview 3 is not a fresh emulator or physical-TV validation.
+
+
+## Fourth preview: original-game menus
+
+The launcher uses the original title, background and Game Select artwork; controller setup uses Player Select styling, and the sound screen uses the original Option heading. The pause menu uses the game's sprite font over the actual paused canvas. Tizen/webOS receive a matching in-game startup screen instead of the upstream browser setup. Mouse-only menu/diagnostic hints disappear during controller play; Back, the controller chords and F8 still open their tools.
+
+These assets are prepared **locally from the player's supported archive**, including archives converted from a supported ROM. They are not bundled in the public APK or Windows EXE. A bounded, allowlisted converter writes one private `tv-game-theme.css` into the installed game content. No external artwork/font downloads are needed. Incompatible/custom archives keep readable fallback text. Android transfers explicitly reset an old skin when the replacement archive lacks native assets.
+
+**Existing installs:** prepare and transfer game content once using this preview's Windows app to obtain the original artwork/font. Installing only the new APK updates the layout and controls, but cannot supply game assets. APK updates preserve private game files and saves.
+
+Seven synthetic-only decoder/packaging tests cover formats, byte order, alpha, invalid resources, private output and stale-skin reset. PC browser checks cover both native and missing-art startup, TV-remote keyboard navigation, independent raw controller input, pause/resume, saved remaps, safe exit and actual saved-file round trips. A separate game-free launcher check covers horizontal D-pad/stick navigation, PS5-layout confirm, missing game content and unsupported device states. Screenshots show the real app in a PC browser, using simulated controllers; the pause screenshot was captured in an actual race. Physical controller, real-TV performance and multiplayer validation remain pending.
+
+
+Preview 4 was also checked in the API 36 Android TV emulator: original artwork/font render in Gecko, the compact launcher footer fits, remote D-pad/OK opens controller setup, the game reaches engine-ready and native Back opens the themed pause menu over the intro. The old browser setup is covered before JavaScript executes. These checks do not certify Android race performance or physical controllers. The emulator was stopped after testing.
