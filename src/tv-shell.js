@@ -61,7 +61,7 @@ function closeMenu(){
 function render(reason=''){
  const preferred=panel.dataset.page===page?document.activeElement?.dataset.action:null;
  capture=null;liveNodes=new Map();panel.replaceChildren();panel.dataset.page=page;
- pageHeader(({main:'Pit stop',controllers:'Controllers & player assignments',settings:'Sound & display',exit:'Leave this game?'})[page]||'Kart64 TV');
+ pageHeader(({main:'Pause',controllers:'Controller select',settings:'Sound & display',exit:'Leave this game?'})[page]||'Kart64 TV');
  alertNode=el('p',reason,'tv-alert');alertNode.setAttribute('role','status');panel.append(alertNode);
  if(page==='main'){
   panel.append(el('p',ready?'Take a breather. Your game is paused.':'Set up your controllers, then head to the starting grid.','tv-note'));

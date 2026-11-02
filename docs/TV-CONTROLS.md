@@ -46,3 +46,10 @@ The new Android APK bundles the TV shell and augments the supported existing ins
 ## Second preview: interface redesign
 
 Preview 2 replaces the original form-style interface with a consistent navy/gold racing menu. Both controllers fit side by side with live diagrams, physical button highlights and stick movement. Bindings are grouped into Buttons, D-pad & clicks, and Sticks & deadzone. The sound screen has a real volume meter and selected render-scale cards. Focus remains on the chosen volume control after changing its value. Engine pause, safe exit, remapping persistence and disconnect protection retain their existing tests. Screenshots use simulated controller input; physical hardware validation is still pending.
+
+
+## Third preview: classic kart-racer theme
+
+Preview 3 applies a stronger Mario Kart 64-inspired menu style to the TV launcher, loading screen, pause menu, controller setup, bindings, sound/display and exit confirmation. Bright blue frames, orange/yellow outlined headings, bevelled buttons, selection arrows and original CSS chequered artwork replace the navy/gold dashboard styling. No Nintendo artwork or fonts are bundled. No extra image downloads or game changes are involved.
+
+The 1280 × 720 launcher and standard menu pages fit their main controls without scrolling. The PC browser game integration checks are rerun with synthetic Xbox/PS5 inputs. These are real app screenshots on PC, not TV captures. The earlier Android emulator checks above apply to Preview 1; Preview 3 is not a fresh emulator or physical-TV validation.

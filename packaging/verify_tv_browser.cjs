@@ -36,7 +36,7 @@ async function main(){
   await p.waitForTimeout(150);const swaps=await p.evaluate(()=>window.__kartFrameSwaps);await p.waitForTimeout(400);
   assert.equal(await p.evaluate(()=>window.__kartFrameSwaps),swaps,'Game must actually stop while the menu is open');
   await p.keyboard.press('ArrowDown');await p.keyboard.press('Enter');
-  await p.getByRole('heading',{name:'Controllers & player assignments'}).waitFor();
+  await p.getByRole('heading',{name:'Controller select'}).waitFor();
   await p.getByRole('button',{name:'Change bindings',exact:true}).first().click();
   await p.locator('.tv-binding button').first().click();await p.waitForTimeout(100);
   await p.evaluate(()=>__rawPads[0].buttons[3]={pressed:true,value:1});
@@ -60,7 +60,7 @@ async function main(){
   // UI controls stay on the physical layout after gameplay A has been rebound to Y.
   await p.keyboard.press('Escape');await p.evaluate(()=>__rawPads[0].buttons[13]={pressed:true,value:1});await p.waitForTimeout(80);
   await p.evaluate(()=>__rawPads[0].buttons[13]={pressed:false,value:0});await p.waitForTimeout(250);
-  await p.evaluate(()=>__rawPads[0].buttons[0]={pressed:true,value:1});await p.getByRole('heading',{name:'Controllers & player assignments'}).waitFor();
+  await p.evaluate(()=>__rawPads[0].buttons[0]={pressed:true,value:1});await p.getByRole('heading',{name:'Controller select'}).waitFor();
   await p.evaluate(()=>__rawPads[0].buttons[0]={pressed:false,value:0});await p.waitForTimeout(400);
   await p.keyboard.press('Escape');await p.evaluate(()=>__rawPads[0].buttons[0]={pressed:true,value:1});await p.waitForFunction(()=>!Kart64TV.open);
   assert.equal(await p.evaluate(()=>navigator.getGamepads()[1].buttons.some(b=>b.pressed)),false);

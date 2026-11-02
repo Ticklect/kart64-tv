@@ -1,26 +1,26 @@
 {
-  "version": "1.0.2-preview2",
+  "version": "1.0.2-preview3",
   "engine": "GeckoView 159.0.20261022150525",
   "variants": {
     "arm64-v8a": {
-      "url": "https://github.com/Ticklect/kart64-tv/releases/download/v1.0.2-preview2/Kart64TV-Android-TV-arm64-v8a.apk",
-      "size": 103700159,
-      "sha256": "12aef2e3b0bc69605fa80ef4d85225bb55de3f6f17093d259a62e0e8c73e9e40"
+      "url": "https://github.com/Ticklect/kart64-tv/releases/download/v1.0.2-preview3/Kart64TV-Android-TV-arm64-v8a.apk",
+      "size": 103693398,
+      "sha256": "d359fd343b8a6a9023c6316d17e8694d5620efbd57e5e3cb4542d451232bab0b"
     },
     "armeabi-v7a": {
-      "url": "https://github.com/Ticklect/kart64-tv/releases/download/v1.0.2-preview2/Kart64TV-Android-TV-armeabi-v7a.apk",
-      "size": 98406665,
-      "sha256": "ac6e6434ff0227f31b3fa0dfdf69152e388d7ed0dd966df65ae41502d345e7ef"
+      "url": "https://github.com/Ticklect/kart64-tv/releases/download/v1.0.2-preview3/Kart64TV-Android-TV-armeabi-v7a.apk",
+      "size": 98399900,
+      "sha256": "3f07917057636a64f2cb1cb26f39fc75addb8fdb4a4c98f686a874756f95a503"
     },
     "x86_64": {
-      "url": "https://github.com/Ticklect/kart64-tv/releases/download/v1.0.2-preview2/Kart64TV-Android-TV-x86_64.apk",
-      "size": 110499436,
-      "sha256": "efe7aa77b35ba54c62d8e63015cb4f58e1646b32ce6b382ad30813ff80dbe31e"
+      "url": "https://github.com/Ticklect/kart64-tv/releases/download/v1.0.2-preview3/Kart64TV-Android-TV-x86_64.apk",
+      "size": 110492671,
+      "sha256": "a49f53156a18565d6a4ebf64aebca35470f1dbf61fbcb9c6ac023a6e0f1e3f93"
     }
   },
   "universal": {
-    "url": "https://github.com/Ticklect/kart64-tv/releases/download/v1.0.2-preview2/Kart64TV-Android-TV.apk",
-    "size": 267889228,
-    "sha256": "bccdbe28bc6fb311303f3e24fa86d16906958f36ff6e58bad514fba032aa41cc"
+    "url": "https://github.com/Ticklect/kart64-tv/releases/download/v1.0.2-preview3/Kart64TV-Android-TV.apk",
+    "size": 267882463,
+    "sha256": "113e9390bc0bd5676ea6dd0155cd8cf547c525f0076eb45802fabf4a11e0fb10"
   }
 }
