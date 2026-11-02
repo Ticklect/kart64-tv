@@ -21,58 +21,56 @@ from uninstall import remove_app
 DOWNLOADER_CODE = '7989374'
 DOWNLOADER_URL = 'https://aftv.news/' + DOWNLOADER_CODE
 
-STYLE='''
-QWidget { background:#fafaf9; color:#262626; font-family:"Segoe UI"; font-size:13px; }
-QFrame#sidebar { background:#f0f0ee; border-right:1px solid #dededb; }
-QFrame#card { background:transparent; border:0; border-bottom:1px solid #e0e0dd; border-radius:0; }
-QFrame#sidebar QLabel, QFrame#card QLabel { background:transparent; }
-QLabel#title { font-size:25px; font-weight:600; color:#202020; }
-QLabel#brand { font-size:16px; font-weight:600; color:#262626; }
-QLabel#eyebrow { color:#747470; font-size:12px; font-weight:500; }
-QLabel#muted { color:#71716b; }
-QLabel#cardTitle { font-size:14px; font-weight:600; }
-QPushButton { background:#ffffff; border:1px solid #d4d4cf; border-radius:4px; padding:8px 13px; font-weight:500; }
-QPushButton:hover { background:#eeeeeb; border-color:#b4b4af; }
-QPushButton:disabled { color:#999993; background:#f3f3f0; border-color:#e2e2de; }
-QPushButton#primary { background:#303834; border-color:#303834; color:#ffffff; }
-QPushButton#primary:hover { background:#49534d; }
-QPushButton#primary:disabled { background:#e3e5e2; border-color:#e3e5e2; color:#999e99; }
-QPushButton#nav { border:0; background:transparent; color:#64645f; text-align:left; padding:9px 12px; }
-QPushButton#nav:checked { background:#e0e0dc; color:#202020; }
-QLineEdit { background:#ffffff; border:1px solid #d4d4cf; border-radius:4px; padding:8px; selection-background-color:#c7d7cb; }
-QListWidget { background:transparent; border:0; outline:0; }
-QListWidget::item { background:transparent; border:0; border-bottom:1px solid #deded9; padding:0px; }
-QListWidget::item:selected { background:#e9eee9; color:#202020; }
-QPlainTextEdit { background:#ffffff; color:#44443f; border:1px solid #deded9; border-radius:4px; padding:10px; font-family:Consolas; font-size:12px; }
-QProgressBar { background:#e3e5e1; border:0; max-height:3px; }
-QProgressBar::chunk { background:#677f6b; }
-'''
-
-# Original menu graphics, drawn locally. No game assets are bundled.
-STYLE += '''
-QWidget { background:#123b74; color:#fff9dd; font-size:14px; }
-QFrame#sidebar { background:#09234a; border-right:3px solid #061730; }
-QFrame#card { background:#244d79; border:2px solid #7997ad; border-bottom:4px solid #061d39; border-radius:3px; }
-QLabel#title { font-family:"Arial Black"; font-size:27px; color:#ffe047; }
-QLabel#muted { color:#c4daed; }
-QLabel#cardTitle { color:#ffffff; font-size:15px; font-weight:700; }
-QLabel#eyebrow { color:#ffde4d; }
+# Original racing-menu palette; no game artwork is bundled.
+STYLE = """
+QWidget { background:#103364; color:#fff9e5; font-family:"Segoe UI"; font-size:14px; }
+QFrame#sidebar { background:#081f40; border-right:2px solid #061730; }
+QLabel { background:transparent; }
+QLabel#title { font-family:"Arial Black"; font-size:28px; color:#ffe047; }
+QLabel#muted { color:#bad0e7; }
+QLabel#cardTitle { color:#ffffff; font-size:16px; font-weight:700; }
+QLabel#eyebrow { color:#ffdc42; font-size:11px; font-weight:700; }
 QLabel#downloaderCode { color:#ffe047; font-family:Consolas; font-size:30px; font-weight:700; }
-QPushButton { background:#3b648e; border:2px solid #8daac0; border-bottom:4px solid #071f3d; color:white; border-radius:3px; font-weight:700; padding:9px 15px; }
-QPushButton:hover { background:#537da4; border-color:#ffe047; }
-QPushButton:disabled { background:#284c70; color:#879fb4; border-color:#345779; }
-QPushButton#primary { background:#e54b32; color:#ffffff; border:2px solid #ffaf68; border-bottom:4px solid #6a211c; }
-QPushButton#primary:hover { background:#f05c3e; border-color:#ffe047; }
+QFrame#card, QFrame#catalogCard { background:#1c4370; border:1px solid #54799d; border-bottom:3px solid #061d39; border-radius:8px; }
+QFrame#progressCard { background:#09254c; border:1px solid #597b9f; border-top:3px solid #ffdc42; border-radius:8px; }
+QLabel#badgeTested { color:#b7efc8; background:#123d36; border:1px solid #438768; border-radius:4px; padding:5px 9px; font-size:12px; font-weight:700; }
+QLabel#badgeExperimental { color:#ffe59a; background:#493f26; border:1px solid #847043; border-radius:4px; padding:5px 9px; font-size:12px; font-weight:700; }
+QPushButton { background:#2d557f; border:1px solid #7795b4; border-bottom:3px solid #071f3d; color:white; border-radius:5px; font-weight:600; padding:10px 16px; }
+QPushButton:hover { background:#3c6590; border-color:#ffe047; }
+QPushButton:focus, QLineEdit:focus { border:2px solid #ffe047; }
+QPushButton:disabled { background:#234566; color:#91a5ba; border-color:#365775; }
+QPushButton#primary { background:#d94b32; color:white; border-color:#ffae70; border-bottom-color:#6a211c; }
+QPushButton#primary:hover { background:#ee6146; }
 QPushButton#primary:disabled { background:#493f4a; border-color:#645967; color:#a599a9; }
-QPushButton#nav { background:transparent; color:#c7d9e7; border:2px solid transparent; border-radius:3px; padding:11px; }
-QPushButton#nav:checked { background:#ffdc42; color:#172d4d; border:2px solid #fff1a2; border-bottom:4px solid #b78420; }
-QLineEdit { background:#0e2d52; color:white; border:2px solid #648aab; selection-background-color:#526e49; }
-QListWidget::item { background:#244d79; border:2px solid #6487a4; margin-bottom:5px; }
-QListWidget::item:selected { background:#355d7f; border:2px solid #ffdc42; }
-QPlainTextEdit { background:#09234a; color:#d1e3f0; border:2px solid #6487a4; }
-QProgressBar { background:#09234a; }
-QProgressBar::chunk { background:#ffdc42; }
-'''
+QPushButton#nav { background:transparent; color:#c7d9e7; border:1px solid transparent; text-align:left; padding:12px; }
+QPushButton#nav:hover { background:#153a61; }
+QPushButton#nav:checked { background:#ffdc42; color:#172d4d; border:1px solid #fff1a2; border-bottom:3px solid #b78420; }
+QLineEdit { background:#0b284d; color:white; border:1px solid #648aab; border-radius:5px; padding:11px; selection-background-color:#315d8d; }
+QListWidget { background:transparent; border:0; outline:0; }
+QListWidget::item { background:#1c4370; border:1px solid #54799d; padding:6px; margin-bottom:5px; border-radius:4px; }
+QListWidget::item:selected { background:#2a537b; border:1px solid #ffdc42; }
+QListWidget#stageList::item { background:#12365c; border:0; border-left:3px solid #6d8ba6; padding:9px 12px; }
+QListWidget#catalogList::item { background:transparent; border:0; padding:0; margin:0; }
+QPlainTextEdit { background:#081f40; color:#d1e3f0; border:1px solid #54799d; border-radius:5px; padding:12px; font-family:Consolas; font-size:12px; }
+QProgressBar { background:#061c39; border:0; border-radius:4px; min-height:8px; max-height:8px; }
+QProgressBar::chunk { background:#ffdc42; border-radius:4px; }
+QScrollBar:vertical { background:#09254c; width:8px; margin:0; }
+QScrollBar::handle:vertical { background:#6484a5; border-radius:4px; min-height:28px; }
+QScrollBar::add-line:vertical, QScrollBar::sub-line:vertical { height:0; }
+QScrollBar::add-page:vertical, QScrollBar::sub-page:vertical { background:none; }
+"""
+
+class CardList(QListWidget):
+    def fit_cards(self):
+        width=max(100,self.viewport().width()-18)
+        for index in range(self.count()):
+            item=self.item(index);widget=self.itemWidget(item)
+            if widget:
+                widget.setFixedWidth(width)
+                height=widget.layout().totalHeightForWidth(width)
+                item.setSizeHint(QSize(width,max(widget.minimumSizeHint().height(),height)))
+    def resizeEvent(self,event):
+        super().resizeEvent(event);self.fit_cards()
 
 class RaceMark(QWidget):
     def __init__(self):
@@ -264,18 +262,29 @@ class Studio(QMainWindow):
         self.performance.addWidget(text('Graphics callbacks are a synthetic workload, not game FPS. CPU work is a synthetic score, not utilisation. These figures do not predict gameplay.','muted'))
     def build_activity(self):
         self.heading(self.activity,'WHAT IS HAPPENING','Activity','Setup progress and diagnostic messages appear here.')
-        self.activity_state=text('Ready','cardTitle');self.activity.addWidget(self.activity_state)
-        self.activity_progress=QProgressBar();self.activity_progress.setRange(0,0);self.activity_progress.hide();self.activity.addWidget(self.activity_progress)
-        self.stage_list=QListWidget();self.stage_list.setMaximumHeight(190);self.activity.addWidget(self.stage_list)
+        hero,hero_layout=card();hero.setObjectName('progressCard')
+        hero_layout.setContentsMargins(22,18,22,20)
+        hero_layout.addWidget(text('INSTALLATION STATUS','eyebrow'))
+        self.activity_state=text('Ready when you are','cardTitle');hero_layout.addWidget(self.activity_state)
+        self.activity_progress=QProgressBar();self.activity_progress.setTextVisible(False);self.activity_progress.setRange(0,0);self.activity_progress.hide();hero_layout.addWidget(self.activity_progress)
+        hero_layout.addWidget(text('Percentages measure this download. Other steps show elapsed time.','muted'))
+        self.activity.addWidget(hero)
+        self.stage_list=QListWidget();self.stage_list.setObjectName('stageList');self.stage_list.setMinimumHeight(120);self.stage_list.setMaximumHeight(240);self.stage_list.hide();self.activity.addWidget(self.stage_list)
         self.current_stage=None;self.stage_started=0;self.stage_finished=False;self.stage_percent=None
-        self.log=QPlainTextEdit();self.log.setReadOnly(True);self.activity.addWidget(self.log,1)
-        b=QPushButton('Open official SpaghettiKart releases ↗');b.clicked.connect(lambda:webbrowser.open('https://github.com/HarbourMasters/SpaghettiKart/releases'));self.activity.addWidget(b,alignment=Qt.AlignLeft)
+        self.diagnostics_toggle=QPushButton('Show diagnostic log');self.diagnostics_toggle.setCheckable(True);self.activity.addWidget(self.diagnostics_toggle,alignment=Qt.AlignLeft)
+        self.log=QPlainTextEdit();self.log.setReadOnly(True);self.log.setMinimumHeight(180);self.log.hide();self.activity.addWidget(self.log,1)
+        self.diagnostics_toggle.toggled.connect(self.show_diagnostics)
+        self.activity.addStretch()
+        b=QPushButton('Official SpaghettiKart releases');b.clicked.connect(lambda:webbrowser.open('https://github.com/HarbourMasters/SpaghettiKart/releases'));self.activity.addWidget(b,alignment=Qt.AlignLeft)
+    def show_diagnostics(self,visible):
+        self.log.setVisible(visible)
+        self.diagnostics_toggle.setText('Hide diagnostic log' if visible else 'Show diagnostic log')
     def build_catalog(self):
         self.heading(self.catalog,'','TV guide','Search recorded evidence and experimental installation routes.')
-        self.catalog_search=QLineEdit();self.catalog_search.setPlaceholderText('Search model, brand, operating system or controller')
+        self.catalog_search=QLineEdit();self.catalog_search.setClearButtonEnabled(True);self.catalog_search.setPlaceholderText('Search model, brand, operating system or controller')
         self.catalog.addWidget(self.catalog_search)
         self.catalog_summary=text('','muted');self.catalog.addWidget(self.catalog_summary)
-        self.catalog_list=QListWidget();self.catalog_list.setWordWrap(True);self.catalog_list.setSpacing(8);self.catalog.addWidget(self.catalog_list,1)
+        self.catalog_list=CardList();self.catalog_list.setObjectName('catalogList');self.catalog_list.setWordWrap(True);self.catalog_list.setSpacing(8);self.catalog.addWidget(self.catalog_list,1)
         self.catalog_rows=json.loads((Path(__file__).resolve().parent/'assets'/'tv-catalog.json').read_text(encoding='utf-8'))
         self.catalog_search.textChanged.connect(self.refresh_catalog);self.refresh_catalog()
         self.catalog.addWidget(text('Recorded observations, not predictions. A matching brand or similar model does not establish compatibility. No results are uploaded automatically.','muted'))
@@ -284,15 +293,25 @@ class Studio(QMainWindow):
         for row in self.catalog_rows:
             if not all(term in ' '.join(row.values()).casefold() for term in terms):continue
             value=f"{row['brand']} · {row['model']}\n{row['status']} · {row['os']}\nController: {row['controller']}\nBoot: {row['timing']}\nFPS: not measured\n{row['notes']}"
-            self.catalog_list.addItem(value)
+            item=QListWidgetItem(value);self.catalog_list.addItem(item)
+            panel,body=card();panel.setObjectName('catalogCard');body.setContentsMargins(18,16,18,18);body.setSpacing(10)
+            top=QHBoxLayout();top.addWidget(text(row['brand'].upper(),'eyebrow'),1)
+            badge=text(row['status'],'badgeTested' if row['status']=='Race tested' else 'badgeExperimental');badge.setWordWrap(False);top.addWidget(badge);body.addLayout(top)
+            body.addWidget(text(row['model'],'cardTitle'));body.addWidget(text(row['os'],'muted'))
+            body.addWidget(text('CONTROLLER','eyebrow'));body.addWidget(text(row['controller']))
+            body.addWidget(text('RECORDED BOOT','eyebrow'));body.addWidget(text(row['timing']))
+            body.addWidget(text('FPS: not measured','muted'));body.addWidget(text(row['notes'],'muted'))
+            self.catalog_list.setItemWidget(item,panel)
+        self.catalog_list.fit_cards()
         count=self.catalog_list.count()
-        self.catalog_summary.setText(f'{count} matching entries · 1 exact TV model race-tested in this guide' if count else 'No matching evidence. This model has not been recorded in the guide.')
+        tested=sum(row['status']=='Race tested' for row in self.catalog_rows)
+        self.catalog_summary.setText(f'{count} matching entries · {tested} exact TV model race-tested in this guide' if count else 'No matching evidence. This model has not been recorded in the guide.')
     def show_stage(self,value):
         label=value['label']
         if self.current_stage!=label:
             if self.current_stage and self.stage_list.count():self.stage_list.item(self.stage_list.count()-1).setText('Done · '+self.current_stage)
             self.current_stage=label;self.stage_started=time.monotonic();self.stage_finished=False
-            self.stage_list.addItem('Working · '+label);self.stage_list.scrollToBottom()
+            self.stage_list.addItem('Working · '+label);self.stage_list.setFixedHeight(min(240,self.stage_list.count()*44+8));self.stage_list.show();self.stage_list.scrollToBottom()
         done,total=value.get('completed'),value.get('total');self.stage_percent=None
         if isinstance(total,(int,float)) and total>0 and isinstance(done,(int,float)) and 0<=done<=total:
             self.stage_percent=int(done*100/total)
@@ -306,6 +325,7 @@ class Studio(QMainWindow):
             measured=f' · {self.stage_percent}% of download' if self.stage_percent is not None else ''
             self.activity_state.setText(f'{self.current_stage}{measured} · {seconds}s')
     def finish_stages(self,success):
+        if not success:self.diagnostics_toggle.setChecked(True)
         if not self.current_stage:return
         self.stage_finished=True
         self.stage_list.item(self.stage_list.count()-1).setText(('Done' if success else 'Failed')+' · '+self.current_stage)
@@ -384,7 +404,7 @@ class Studio(QMainWindow):
         for row in reversed(rows):self.history.addItem(f"{row.get('model','Unknown model')}   •   {row.get('time','')}\nCPU work {row.get('cpu_iterations','—')} / sec   |   Graphics callbacks {row.get('graphics_callbacks','—')} / sec")
     def start_work(self,target,args,show_activity=True):
         if self.busy:return
-        self.current_stage=None;self.stage_list.clear();self.stage_percent=None;self.stage_finished=False
+        self.current_stage=None;self.stage_list.clear();self.stage_list.hide();self.stage_percent=None;self.stage_finished=False
         for bar in (self.progress,self.activity_progress):bar.setRange(0,0)
         self.busy=True;self.scan_button.setEnabled(False);self.tv_list.setEnabled(False);self.progress.show();self.activity_progress.show();self.activity_state.setText('Working…');self.task_status.setText('●  Working · see Activity');self.update_selection()
         if show_activity:self.navigate(3)

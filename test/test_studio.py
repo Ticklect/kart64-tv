@@ -150,3 +150,13 @@ class PresentationTests(unittest.TestCase):
    self.assertIn('Failed',window.stage_list.item(1).text())
    self.assertIn('Installing on TV',window.activity_state.text())
   finally:window.shutdown()
+
+ def test_failure_before_any_stage_reveals_diagnostics(self):
+  window=Studio(start_scan=False)
+  try:
+   window.engine.events.put(('log','Connection denied'))
+   window.engine.events.put(('done',False));window.poll()
+   self.assertFalse(window.log.isHidden())
+   self.assertTrue(window.diagnostics_toggle.isChecked())
+   self.assertIn('Connection denied',window.log.toPlainText())
+  finally:window.shutdown()
