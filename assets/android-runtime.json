@@ -1,26 +1,26 @@
 {
-  "version": "1.0.1",
+  "version": "1.0.2-preview1",
   "engine": "GeckoView 159.0.20261022150525",
   "variants": {
     "arm64-v8a": {
-      "url": "https://github.com/Ticklect/kart64-tv/releases/download/v1.0.1/Kart64TV-Android-TV-arm64-v8a.apk",
-      "size": 103672969,
-      "sha256": "85505c150ba5a2e1d93d730da9f9d9a9eb5a6e81e5b61ee3e44dc6d8c9f1f5f5"
+      "url": "https://github.com/Ticklect/kart64-tv/releases/download/v1.0.2-preview1/Kart64TV-Android-TV-arm64-v8a.apk",
+      "size": 103693491,
+      "sha256": "fd2164df71d34104cb50789678ac0a852e2c77c5805af78fcde0a8f0f74a5698"
     },
     "armeabi-v7a": {
-      "url": "https://github.com/Ticklect/kart64-tv/releases/download/v1.0.1/Kart64TV-Android-TV-armeabi-v7a.apk",
-      "size": 98379475,
-      "sha256": "171af593425dc6a48d4b01a5c02564d62aabc60f362f69ada0cc33d257f23df6"
+      "url": "https://github.com/Ticklect/kart64-tv/releases/download/v1.0.2-preview1/Kart64TV-Android-TV-armeabi-v7a.apk",
+      "size": 98399997,
+      "sha256": "dffcfa5b9fea6f55660192ba220037c6345786d7569ad1047afeb061f329e6e5"
     },
     "x86_64": {
-      "url": "https://github.com/Ticklect/kart64-tv/releases/download/v1.0.1/Kart64TV-Android-TV-x86_64.apk",
-      "size": 110472246,
-      "sha256": "d4f4300c97608d8db37c90ead8ea246d03a1d68e1c318cc164343d5a9e038d03"
+      "url": "https://github.com/Ticklect/kart64-tv/releases/download/v1.0.2-preview1/Kart64TV-Android-TV-x86_64.apk",
+      "size": 110492768,
+      "sha256": "4a36d456efdc9824d8364bcce8596c823629d1c37ffcfc813a72be1ea4a9670a"
     }
   },
   "universal": {
-    "url": "https://github.com/Ticklect/kart64-tv/releases/download/v1.0.1/Kart64TV-Android-TV.apk",
-    "size": 267862038,
-    "sha256": "064e48a244d3b72a75bb472534682284a8b6200c2022d3ced47ec138d19b6c81"
+    "url": "https://github.com/Ticklect/kart64-tv/releases/download/v1.0.2-preview1/Kart64TV-Android-TV.apk",
+    "size": 267882556,
+    "sha256": "a58df3f05af492dc545b8a2518885f51491efdaa8511e2427e359183fc4c39b7"
   }
 }

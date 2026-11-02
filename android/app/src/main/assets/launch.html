@@ -1,16 +1,4 @@
-<!doctype html><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1"><title>Kart64 TV</title>
-<style>body{background:#123b74;color:#fff5d7;font:24px sans-serif;margin:8vh 8vw}h1{color:#ffdf43}button{font:inherit;background:#ffdf43;color:#09234a;padding:16px 28px;border:0}small{display:block;margin:25px 0;font-size:18px;line-height:1.6}</style>
-<h1>Kart64 TV</h1><p id="state">Checking this TV…</p><small id="details"></small><button id="play" hidden>Start game</button>
-<script>
-(async()=>{
- let shared=false;try{shared=new WebAssembly.Memory({initial:1,maximum:2,shared:true}).buffer instanceof SharedArrayBuffer}catch(e){}
- const canvas=document.createElement('canvas'),gl=!!canvas.getContext('webgl2');
- const result={sharedWasm:shared,webgl2:gl,isolated:crossOriginIsolated,gamepads:typeof navigator.getGamepads==='function'};
- fetch('../report',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(result)}).catch(()=>{});
- document.getElementById('details').textContent='Shared memory: '+(shared?'available':'unavailable')+' · WebGL2: '+(gl?'available':'unavailable')+' · Browser gamepads: '+(result.gamepads?'API present, pairing untested':'unavailable');
- if(!shared||!gl){document.getElementById('state').textContent='This device cannot run the current game runtime. Required browser features are unavailable.';return}
- let installed=false;try{installed=(await fetch('../game/ready.json')).ok}catch(e){}
- document.getElementById('state').textContent=installed?'Required browser features detected. Game performance still needs testing.':'Browser check passed. This build does not contain your game data.';
- if(installed){const p=document.getElementById('play');p.hidden=false;p.onclick=()=>location.href='../game/index.html';p.focus()}
-})();
-</script>
+<!doctype html><html><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Kart64 TV</title>
+<style>
+*{box-sizing:border-box}body{background:#0c2b56;color:#fff8df;font:clamp(18px,2.2vw,28px)/1.45 system-ui,sans-serif;margin:0;padding:7vh 8vw}main{max-width:1100px;margin:auto}h1{color:#ffdf43;font-size:clamp(40px,6vw,72px);font-weight:900;font-style:italic;margin:0}small{color:#bdd4ed;display:block;font-size:.75em;margin:20px 0}.stripe{height:12px;max-width:280px;background:repeating-linear-gradient(90deg,#fff8df 0 12px,#0c2b56 12px 24px);margin:18px 0 32px}button{font:inherit;min-height:64px;background:#2d557f;color:white;padding:16px 28px;border:2px solid #86a4c3;border-bottom:5px solid #061a37;border-radius:7px;margin:8px 16px 8px 0}button#play{background:#df5035}button:focus{outline:5px solid #ffdf43;outline-offset:4px}button[hidden]{display:none}details{margin-top:24px;font-size:.75em;color:#bdd4ed}summary{cursor:pointer;padding:12px 0}#pads{color:#b5efc4}
+</style></head><body><main><h1>KART64 TV</h1><div class="stripe"></div><p id="state" role="status">Checking this TV…</p><button id="play" hidden>Play game</button><button id="controllers" hidden>Controllers & bindings</button><p id="pads"></p><small>Pair an Xbox or PS5 controller in your TV settings, then press a button. TV remote D-pad and OK also work in these menus.</small><details><summary>Technical check</summary><p id="details"></p></details><small>No game files are included. Prepare and transfer your own game data using the Windows app.</small></main><script src="tv-controls.js"></script><script src="launcher.js"></script></body></html>

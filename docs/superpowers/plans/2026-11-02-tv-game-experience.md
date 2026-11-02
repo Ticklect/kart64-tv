@@ -1,0 +1,14 @@
+# TV game experience
+
+Scope: add a shared, locally served TV shell to the packaged game. Keep upstream game assets and original gameplay. No physical TV access. Xbox and PS5 browser-standard controllers get appropriate button labels; physical PS5/Android validation remains pending.
+
+- Pure controller model: four explicit player slots, per-controller locally saved standard button/axis remaps, deadzone, input previews and reset. Read raw pads independently from virtual game inputs so remaps cannot break shell navigation. Suppress game inputs while shell is open; release held inputs before resuming.
+- Runtime bridge: verify the pinned engine's actual pause/resume hooks, audio gain and render-resolution exports. Safely pause for controller loss/backgrounding; reconnect never resumes automatically. Confirm exit and flush saved data before leaving; block exit if saving fails.
+- TV shell: themed pause menu, controller test/remap/player assignment, sound and display settings, genuine boot stage events and elapsed timer (no invented percentage). Keyboard, remote D-pad/OK/Back and gamepad navigation; reserve a reliable pause chord independent of bindings.
+- Integration: inject shell before engine script, include files in Tizen/webOS/Android packaging, persist Android settings on stable loopback origin. Preserve Android Back for shell instead of activity exit. Build launcher APKs and local Windows app with refreshed hashes only after verification.
+- Verification: test pure mapping/validation/assignment/reconnect/pause failures first, then real browser with synthetic controllers and locally owned private game data. Verify pause stops engine buffer swaps and saves persist; browser UI tests for remote/controller navigation and failure states. Build APK, check signing/ABIs and emulator launcher if available. Do not contact physical TV or publish game data. Mark physical tests pending.
+
+
+Implementation evidence: pure controller and engine tests, full Python/Node suites and owned-game browser integration pass. The browser check now also covers duplicate native/browser Back delivery, a focused retry action after failed engine-script loading, preserving absent-controller profiles and advancing virtual input timestamps for SDL when neutralising a held physical control. Android TV emulator reached engine-ready and displayed the TV menu with Back and controller setup with D-pad/OK. Physical TV untouched.
+
+Release decision: publish as 1.0.2-preview1, leaving stable Latest and Downloader code on 1.0.1 because physical PS5/Xbox reconnection, multiplayer and real-TV performance remain unverified. Android bundles current shell assets and augments the supported existing game page in memory without replacing game data or saves.

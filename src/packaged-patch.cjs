@@ -21,7 +21,10 @@ function skipExtractionPreload(source){
 }
 
 function patchPackagedStartup(html){
- html=replaceOnce(html,'<script>\nconst ROM_SHA1', '<script src="packaged-boot.js"></script>\n<script>\nconst ROM_SHA1');
+ html=replaceOnce(html,"const touchDevice = navigator.maxTouchPoints > 0 || qp.has('touch');",'const touchDevice = false;');
+ html=replaceOnce(html,"  const touchable = navigator.maxTouchPoints > 0 || qp.has('touch');",'  const touchable = false;');
+ html=replaceOnce(html,'<script>\nconst ROM_SHA1', '<script src="packaged-boot.js"></script>\n<link rel="stylesheet" href="tv-shell.css">\n<script src="tv-controls.js"></script>\n<script src="tv-engine.js"></script>\n<script src="tv-shell.js"></script>\n<script>\nconst ROM_SHA1');
+ html=replaceOnce(html,'  statusEl.textContent = t;', '  globalThis.Kart64TV?.loadingMessage(t, bad);\n  statusEl.textContent = t;');
  html=replaceOnce(html,"  const r = await fetch(name);\n  if (!r.ok) throw new Error(name + ': HTTP ' + r.status);\n  FS.writeFile('/data/' + name, new Uint8Array(await r.arrayBuffer()), {canOwn:true});", "  const bytes = await Kart64Boot.readAsset(name);\n  FS.writeFile('/data/' + name, new Uint8Array(bytes), {canOwn:true});");
  html=replaceOnce(html,"await fetch('courses.json', { cache: 'no-cache' })","await Kart64Boot.fetchInstalled('courses.json', { cache: 'no-cache' })");
  html=replaceOnce(html,"await fetch(course.archive, { cache: 'no-cache' })","await Kart64Boot.fetchInstalled(course.archive, { cache: 'no-cache' })");

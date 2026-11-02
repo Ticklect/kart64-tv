@@ -3,7 +3,7 @@ from pathlib import Path
 import json,shutil,struct,zlib
 from installer_core import validate_archive
 
-FILES=('index.html','Spaghettify.js','Spaghettify.wasm','spaghetti.o2r','courses.json','courses/silverstone/silverstone-v1.9.o2r','diagnostics.js','packaged-boot.js')
+FILES=('index.html','Spaghettify.js','Spaghettify.wasm','spaghetti.o2r','courses.json','courses/silverstone/silverstone-v1.9.o2r','diagnostics.js','packaged-boot.js','tv-controls.js','tv-engine.js','tv-shell.js','tv-shell.css')
 
 def make_icon(size):
     rows=[]

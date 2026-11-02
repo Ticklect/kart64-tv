@@ -20,6 +20,7 @@ async function build(stage){
   const file=path.join(dest,...name.split('/'));await fs.mkdir(path.dirname(file),{recursive:true});await fs.writeFile(file,b,{flag:'wx'});
  }
  await fs.copyFile(path.join(__dirname,'diagnostics.js'),path.join(dest,'diagnostics.js'));
+ for(const name of ['tv-controls.js','tv-engine.js','tv-shell.js','tv-shell.css'])await fs.copyFile(path.join(__dirname,name),path.join(dest,name));
  await fs.copyFile(path.join(__dirname,'packaged-boot.js'),path.join(dest,'packaged-boot.js'));
  await fs.copyFile(path.join(__dirname,'..','assets','kart64-256.png'),path.join(dest,'kart64-icon.png'));
  const xml='<?xml version="1.0" encoding="UTF-8"?>\n<widget xmlns="http://www.w3.org/ns/widgets" xmlns:tizen="http://tizen.org/ns/widgets" id="http://localhost/kart64-tv" version="1.0.0" viewmodes="fullscreen">\n<tizen:application id="KART64TV01.Kart64" package="KART64TV01" required_version="6.5"/>\n<content src="index.html"/><icon src="kart64-icon.png"/><name>Kart64 TV</name>\n<tizen:privilege name="http://tizen.org/privilege/filesystem.read"/><tizen:profile name="tv"/><tizen:setting screen-orientation="landscape" context-menu="disable" background-support="disable" encryption="disable" install-location="auto" hwkey-event="enable"/>\n</widget>\n';

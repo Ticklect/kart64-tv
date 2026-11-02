@@ -2,7 +2,7 @@ plugins { id 'com.android.application' }
 android {
     namespace 'com.ticklect.kart64'
     compileSdk 37
-    defaultConfig { applicationId 'com.ticklect.kart64'; minSdk 26; targetSdk 36; versionCode 6; versionName '1.0.1' }
+    defaultConfig { applicationId 'com.ticklect.kart64'; minSdk 26; targetSdk 36; versionCode 7; versionName '1.0.2-preview1' }
     splits {
         abi {
             enable true
@@ -13,6 +13,7 @@ android {
     }
     // Smaller sideload downloads; Android extracts native libraries at install time.
     packaging { jniLibs { useLegacyPackaging = true } }
+    sourceSets { main { assets.srcDir layout.buildDirectory.dir('generated/tvAssets').get().asFile } }
     androidResources { noCompress += ['wasm','o2r','data'] }
     compileOptions { sourceCompatibility JavaVersion.VERSION_17; targetCompatibility JavaVersion.VERSION_17 }
 }
@@ -20,3 +21,9 @@ dependencies {
     implementation 'org.mozilla.geckoview:geckoview:159.0.20261022150525'
     implementation 'org.nanohttpd:nanohttpd:2.3.1'
 }
+
+tasks.register('syncTvAssets', Sync) {
+    from('../../src') { include 'tv-controls.js', 'tv-engine.js', 'tv-shell.js', 'tv-shell.css' }
+    into(layout.buildDirectory.dir('generated/tvAssets'))
+}
+tasks.named('preBuild').configure { dependsOn('syncTvAssets') }

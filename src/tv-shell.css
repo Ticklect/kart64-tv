@@ -1,0 +1,26 @@
+#k64-tv,#k64-loading,#k64-menu-button {font:clamp(16px,2.1vw,25px)/1.4 system-ui,sans-serif;color:#fff8df;box-sizing:border-box}
+#k64-tv[hidden],#k64-loading[hidden],#k64-menu-button[hidden]{display:none!important}
+#k64-tv {position:fixed;inset:0;z-index:30000;background:rgba(3,14,33,.94);display:flex;align-items:center;justify-content:center;padding:3vh 4vw;overflow:auto}
+#k64-tv .tv-panel {width:min(1100px,100%);max-height:92vh;overflow:auto;background:#123768;border:2px solid #6b8eaf;border-top:7px solid #ffda42;border-radius:12px;padding:clamp(18px,3vw,40px);box-sizing:border-box}
+#k64-tv h1,#k64-loading h1 {font-size:clamp(28px,4vw,48px);color:#ffdf43;margin:0 0 12px;font-weight:900;font-style:italic}
+#k64-tv h2 {font-size:1.1em;margin:14px 0 8px;color:#ffdf43}
+#k64-tv p {margin:8px 0 16px}
+#k64-tv .tv-grid {display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:14px}
+#k64-tv button,#k64-menu-button {font:inherit;min-height:54px;background:#2a527c;color:white;border:2px solid #87a4c1;border-bottom:4px solid #051c38;border-radius:6px;padding:12px 18px;text-align:left;cursor:pointer;box-shadow:0 3px 0 #061a37;text-shadow:none;text-transform:none;letter-spacing:normal}
+#k64-tv button:hover,#k64-tv button:focus,#k64-menu-button:focus {outline:4px solid #ffdf43;outline-offset:3px;background:#3c6590}
+#k64-tv button:disabled {opacity:.5;cursor:default}
+#k64-tv button.tv-primary {background:#d64b32;border-color:#ffb26a}
+#k64-tv .tv-note {font-size:.77em;color:#bed5ed}
+#k64-tv .tv-card {background:#0a284d;padding:16px;border-radius:7px;border:1px solid #4d7197;margin-bottom:14px}
+#k64-tv .tv-live {white-space:pre-wrap;font:inherit;font-size:.8em;margin:8px 0 0;color:#b8efc7}
+#k64-tv .tv-alert {color:#ffe395;min-height:1.4em}
+#k64-tv .tv-bar {display:flex;flex-wrap:wrap;gap:12px;align-items:center;margin:12px 0}
+#k64-tv .tv-binding {display:flex;align-items:center;justify-content:space-between;gap:14px;margin:8px 0}
+#k64-tv .tv-binding button {min-width:180px}
+#k64-loading {position:fixed;inset:0;z-index:25000;background:#0a264e;display:flex;flex-direction:column;justify-content:center;padding:8vw;overflow:auto}
+#k64-loading p {max-width:1000px;margin:10px 0}
+#k64-loading .tv-track {height:10px;background:repeating-linear-gradient(90deg,#ffe047 0 24px,#0a264e 24px 48px);margin:24px 0;max-width:750px}
+#k64-loading ol {font-size:.8em;color:#c2d7ed;padding-left:1.2em;max-height:35vh;overflow:auto}
+#k64-menu-button {position:fixed;left:18px;top:18px;z-index:22000;font-size:16px;background:#09254c}
+body.k64-booting #k64-menu-button {display:none!important}
+@media(max-height:600px){#k64-tv .tv-panel{padding:16px;max-height:96vh}#k64-tv button{min-height:44px;padding:7px 12px}}

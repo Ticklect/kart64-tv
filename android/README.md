@@ -27,3 +27,8 @@ Brands are not operating systems. Sony, TCL, Hisense and Philips examples apply 
 Requires JDK 21, Gradle 9.7.1, Android SDK platform 37 and installed Android build tools. From the repository folder run `gradle -p android assembleDebug`. Dependencies are downloaded from Google, Maven Central and Mozilla's Maven repository. The current prototype is a debug-signed app because provisioning uses ADB `run-as`; it is not a Play Store release build.
 
 The build writes `app-arm64-v8a-debug.apk`, `app-armeabi-v7a-debug.apk`, `app-x86_64-debug.apk` and `app-universal-debug.apk` in `android/app/build/outputs/apk/debug`. Each is a complete standalone APK, installed with ordinary `adb install`, not `install-multiple`. Publish the processor-specific APKs as `Kart64TV-Android-TV-<ABI>.apk`, and the universal APK as `Kart64TV-Android-TV.apk`. Refresh `assets/android-runtime.json` with immutable versioned release URLs, exact byte sizes and SHA-256 hashes before building Windows. No APK is embedded in Windows. Keep the same signing certificate for updates. Review Mozilla, NanoHTTPD, Android and bundled native-library notices and signing/update policy before public distribution.
+
+
+## TV controls preview
+
+Version `1.0.2-preview1` (code 7) adds the local TV shell, remapping, controller test, pause menu and boot-stage display. See [controls and validation](../docs/TV-CONTROLS.md). The APK upgrades the supported existing game page in memory and serves its own current shell assets; private game data is preserved. Android Back and lifecycle events use a token-protected local control endpoint. This is a prerelease; the stable Downloader link remains on 1.0.1 until hardware validation.
