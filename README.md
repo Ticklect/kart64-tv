@@ -42,10 +42,10 @@ python studio.py
 
 Select a TV and your own supported US Mario Kart 64 ROM (`.z64`) or SpaghettiKart archive (`.o2r`). Developer Mode and platform-specific pairing are required. No game files are included.
 
-The Windows EXE includes the experimental Android / Fire OS launcher. Those TVs still require Android platform-tools and authorised pairing; LG requires the official webOS CLI.
+The Windows app downloads and verifies the matching experimental Android / Fire OS launcher when needed. Those TVs still require Android platform-tools and authorised pairing; LG requires the official webOS CLI.
 
 [Setup and development](docs/DEVELOPMENT.md) · [Android / Google TV](android/README.md) · [Fire TV](android/FIRE-TV.md)
 
 Built on [Edd Mann's Kart64](https://eddmann.com/kart64/) and [Harbour Masters' SpaghettiKart](https://github.com/HarbourMasters/SpaghettiKart). This project adds the TV installer and integration. Not affiliated with Nintendo.
 
-The EXE includes Qt/PySide6 (LGPLv3), Python and an Android launcher using GeckoView. [Licenses, dependency sources and rebuilding instructions](packaging/SOURCES.md) are supplied with the release.
+The EXE includes Qt/PySide6 (LGPLv3) and Python. The separate Android launcher uses GeckoView. [Licenses, dependency sources and rebuilding instructions](packaging/SOURCES.md) are supplied with the release.

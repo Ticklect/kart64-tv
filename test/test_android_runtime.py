@@ -82,3 +82,14 @@ class AndroidRuntimeTests(unittest.TestCase):
             with self.assertRaises(ValueError):
                 self.prepare()
         self.assertEqual(list(self.cache.iterdir()), [])
+
+    def test_transfer_progress_reports_bytes_and_does_not_fake_cache_downloads(self):
+        counts = []
+        with patch('android_runtime.urllib.request.urlopen', return_value=Response(self.data)):
+            android_runtime.prepare_android_runtime('armeabi-v7a', self.cache, manifest=self.manifest,
+                transfer_progress=lambda done,total: counts.append((done,total)))
+        self.assertEqual(counts[-1], (len(self.data), len(self.data)))
+        counts.clear()
+        android_runtime.prepare_android_runtime('armeabi-v7a', self.cache, manifest=self.manifest,
+            transfer_progress=lambda done,total: counts.append((done,total)))
+        self.assertEqual(counts, [])

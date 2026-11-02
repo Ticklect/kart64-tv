@@ -137,6 +137,13 @@ class Installer:
     def ensure_supported(self,ip):
         for device in self.found:
             if device['ip']==ip and not device.get('supported',True):raise ValueError(device['brand']+' was found, but installing or testing it is not supported yet.')
+    def stage(self,label,completed=None,total=None):
+        self.events.put(('stage',{'label':label,'completed':completed,'total':total}))
+    def tool(self,name):
+        self.stage('Preparing '+{'node':'Node.js','sdb':'Samsung debugging tools'}.get(name,name))
+        result=prepare_tool(name,self.tool_dir,progress=self.say,transfer_progress=lambda done,total:self.stage('Downloading '+name,done,total))
+        self.stage('Tools verified')
+        return result
     def say(self,s):self.events.put(('log',s))
     def start(self):
         if self.busy:return
@@ -156,8 +163,8 @@ class Installer:
         installed=False;app=None;cli_path=None;success=False
         try:
             cli_path=resolve_cli(cli,self.tool_dir,progress=self.say)
-            node=prepare_tool('node',self.tool_dir,progress=self.say)
-            sdb=prepare_tool('sdb',self.tool_dir,progress=self.say)
+            node=self.tool('node')
+            sdb=self.tool('sdb')
             with tempfile.TemporaryDirectory(prefix='kart64-benchmark-') as tmp:
                 package='KB'+secrets.token_hex(4).upper();app=package+'.Check'
                 url='http://'+ip+':8001/api/v2/applications/'+app
@@ -166,6 +173,7 @@ class Installer:
                 except urllib.error.HTTPError as e:
                     if e.code!=404:raise ValueError('Could not verify benchmark installation state.') from e
                 wgt=Path(tmp)/'TVCheck.wgt';make_benchmark(ROOT/'benchmark',wgt,package)
+                self.stage('Installing the temporary compatibility check')
                 self.say('Installing a temporary TV compatibility check…')
                 self.command([str(cli_path),'install',str(wgt),'--tv',ip]);installed=True
                 flags=subprocess.CREATE_NO_WINDOW if os.name=='nt' else 0
@@ -178,6 +186,7 @@ class Installer:
                 with socket.socket() as sock:
                     sock.bind(('127.0.0.1',0));local_port=sock.getsockname()[1]
                 sdb_run(['-s',serial,'forward','tcp:'+str(local_port),'tcp:'+str(remote_port)])
+                self.stage('Running the TV compatibility check')
                 self.say('Running the graphics and capability check on the TV…')
                 p=subprocess.run([str(node),str(ROOT/'src'/'collect-benchmark.cjs'),str(local_port)],capture_output=True,text=True,encoding='utf-8',errors='replace',timeout=75,creationflags=flags)
                 if p.returncode:raise ValueError('The TV benchmark did not return a result.')
@@ -198,17 +207,22 @@ class Installer:
             self.events.put(('done',success))
     def run(self,ip,archive,cli):
         try:
-            self.say('Checking your game file…');kind=identify_game(archive)
+            self.stage('Checking your game file');self.say('Checking your game file…');kind=identify_game(archive)
+            self.stage('Preparing Samsung signing tools')
             cli=resolve_cli(cli,self.tool_dir,progress=self.say)
-            node=prepare_tool('node',self.tool_dir,progress=self.say)
+            node=self.tool('node')
             with tempfile.TemporaryDirectory(prefix='kart64-private-') as tmp:
                 tmp=Path(tmp)
+                self.stage('Preparing your game files')
                 if kind=='rom':archive=prepare_rom(archive,tmp,self.say)
                 stage=tmp/'stage';stage.mkdir()
+                self.stage('Downloading and verifying the game runtime')
                 self.say('Downloading and checking the supported runtime…')
                 self.command([node,str(ROOT/'src'/'build-runtime.cjs'),str(stage)])
+                self.stage('Packaging your game files')
                 self.say('Packaging your game data locally…')
                 package=make_package(stage,archive,tmp/'Kart64TV.wgt')
+                self.stage('Signing and installing on your TV')
                 self.say('Signing and installing. If Samsung opens a sign-in window, finish signing in there.')
                 self.command([str(cli),'install',str(package),'--tv',ip])
                 self.say('Installer reported success. Find Kart64 TV in the TV Apps list.');self.events.put(('done',True))

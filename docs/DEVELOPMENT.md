@@ -75,3 +75,12 @@ Upstream dependency content and redistribution permissions require a separate re
 Application artwork is exported from `assets/kart64-master.png` by `create_icons.py` (requires Pillow). It supplies Windows, Samsung, LG and Android/Fire TV icons plus the Android TV banner. See [artwork notes](../assets/ARTWORK.md). Existing installations receive the artwork after rebuilding and updating their package. Android / Google TV now has an experimental adapter for already-paired network ADB targets; see android/README.md for setup and the emulator evidence. Fire OS TVs now have an experimental route using the same APK when the paired device reports the official Fire TV feature, API 26+ and a supported ABI. Fire OS hardware gameplay remains unverified. See android/FIRE-TV.md. Vega OS, VIDAA, Roku and tvOS still have no implemented installation adapter. Discovery does not establish gameplay compatibility.
 
 `assets/android-runtime.json` pins immutable release URLs, exact sizes and SHA-256 hashes for each Android processor build. The desktop app downloads only the selected TV OS architecture, then caches and re-verifies the APK under `%LOCALAPPDATA%/Kart64TV/runtimes`. No Android APK is bundled in Windows. Rebuild the launcher and update the manifest when publishing Android changes; no game content is included.
+
+
+## Current development preview
+
+The Activity page shows explicit installation stages, elapsed time per stage and a stage history. Node/tool and Android launcher downloads report actual transferred-byte percentages; packaging, signing and TV installation stay indeterminate. Download completion is not overall installation completion. Failures retain the stage name and diagnostic log. Each new task clears the previous task's progress.
+
+The separate TV guide searches `assets/tv-catalog.json` by model, brand, OS, controller and evidence status. Only UE50U8000FKXXU has a recorded physical-TV race; the other entries describe experimental platform routes, not tested models. Historical boot observations retain their app version and measurement endpoints. FPS is not available. Adding a catalog entry requires actual evidence; local synthetic compatibility results do not certify gameplay.
+
+These UI changes are in source and the local development EXE; the published 1.0.1 binaries predate them. No new physical-TV tests were run.

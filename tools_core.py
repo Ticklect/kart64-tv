@@ -37,7 +37,7 @@ def unpack_verified_tool(archive,target,spec):
         raise
     return target
 
-def prepare_tool(name,folder,progress=lambda message:None):
+def prepare_tool(name,folder,progress=lambda message:None,transfer_progress=None):
     if name not in TOOLS:raise ValueError('Unknown tool.')
     if os.name!='nt' or platform.machine().lower() not in ('amd64','x86_64'):raise ValueError('Automatic tools currently support Windows x64 only.')
     spec=TOOLS[name];folder=Path(folder);folder.mkdir(parents=True,exist_ok=True);target=folder/spec['filename']
@@ -57,6 +57,7 @@ def prepare_tool(name,folder,progress=lambda message:None):
                 total+=len(b)
                 if total>spec['zipSize']:raise ValueError('Tool download exceeded its expected size.')
                 out.write(b)
+                if transfer_progress:transfer_progress(total,spec['zipSize'])
         return unpack_verified_tool(archive,target,spec)
 
 def resolve_cli(override,folder,preparer=prepare_tool,progress=lambda message:None):

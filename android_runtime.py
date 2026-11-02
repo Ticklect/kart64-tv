@@ -15,7 +15,7 @@ def select_android_runtime(abis, manifest):
     raise ValueError('No Android launcher is available for this TV CPU architecture.')
 
 
-def prepare_android_runtime(abis, cache, progress=lambda message: None, manifest=None):
+def prepare_android_runtime(abis, cache, progress=lambda message: None, manifest=None, transfer_progress=None):
     if manifest is None:
         manifest = json.loads((Path(__file__).resolve().parent / 'assets/android-runtime.json').read_text())
     abi, spec = select_android_runtime(abis, manifest)
@@ -43,6 +43,7 @@ def prepare_android_runtime(abis, cache, progress=lambda message: None, manifest
                 if count > spec['size']:
                     raise ValueError('Android runtime download exceeded its expected size.')
                 out.write(block)
+                if transfer_progress: transfer_progress(count, spec['size'])
                 if count - reported >= 8 * 1024 * 1024:
                     progress('Android launcher download: ' + str(round(100 * count / spec['size'])) + '%')
                     reported = count

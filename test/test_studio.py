@@ -121,3 +121,32 @@ class StudioTests(unittest.TestCase):
    with patch('studio.QMessageBox.question',return_value=QMessageBox.Yes) as prompt:window.uninstall_selected()
    self.assertIn('10.0.0.2',prompt.call_args.args[2]);self.assertEqual(calls[0][0],'run_uninstall');self.assertEqual(calls[0][1][0]['ip'],'10.0.0.2');self.assertIsNot(calls[0][1][0],device)
   finally:window.shutdown()
+
+class PresentationTests(unittest.TestCase):
+ @classmethod
+ def setUpClass(cls):cls.qt=QApplication.instance() or QApplication([])
+ def test_catalog_search_and_empty_state(self):
+  window=Studio(start_scan=False)
+  try:
+   window.catalog_search.setText('ue50u8000')
+   self.assertEqual(window.catalog_list.count(),1)
+   value=window.catalog_list.item(0).text()
+   self.assertIn('Xbox',value);self.assertIn('0.1.3',value);self.assertIn('FPS: not measured',value)
+   window.catalog_search.setText('nonexistent-model');self.assertEqual(window.catalog_list.count(),0)
+   self.assertIn('No matching',window.catalog_summary.text())
+   window.catalog_search.setText('webOS');self.assertIn('Experimental',window.catalog_list.item(0).text())
+  finally:window.shutdown()
+ def test_measured_stage_progress_resets_and_failure_stays_visible(self):
+  window=Studio(start_scan=False)
+  try:
+   window.engine.events.put(('stage',{'label':'Downloading launcher','completed':25,'total':100}))
+   window.poll();self.assertEqual(window.activity_progress.maximum(),100);self.assertEqual(window.activity_progress.value(),25)
+   self.assertIn('25%',window.activity_state.text())
+   window.engine.events.put(('stage',{'label':'Installing on TV'}));window.poll()
+   self.assertEqual(window.activity_progress.maximum(),0)
+   self.assertEqual(window.stage_list.count(),2)
+   self.assertIn('Done',window.stage_list.item(0).text())
+   window.engine.events.put(('done',False));window.poll()
+   self.assertIn('Failed',window.stage_list.item(1).text())
+   self.assertIn('Installing on TV',window.activity_state.text())
+  finally:window.shutdown()

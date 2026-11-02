@@ -1,5 +1,5 @@
 """Kart64 TV desktop dashboard. Uses the existing, tested installer workers."""
-import os,queue,sys,tempfile,threading,webbrowser,subprocess,json,shutil
+import time,os,queue,sys,tempfile,threading,webbrowser,subprocess,json,shutil
 from pathlib import Path
 from PySide6.QtCore import Qt,QTimer,QSize
 from PySide6.QtGui import QPainter,QPainterPath,QPen,QColor,QFont,QIcon
@@ -118,6 +118,7 @@ class Engine(Installer):
         except Exception as e:self.say('ADB connection stopped: '+str(e));self.events.put(('done',False))
     def run_android(self,serial,game):
         try:
+            self.stage('Checking TV connection')
             serial=validate_android_serial(serial);adb=shutil.which('adb.exe') or shutil.which('adb')
             if not adb:raise ValueError('Install Android platform-tools and add adb to PATH, then pair your TV.')
             flags=getattr(subprocess,'CREATE_NO_WINDOW',0)
@@ -129,45 +130,59 @@ class Engine(Installer):
             self.say(('Fire OS TV' if target_platform=='firetv' else 'Android / Google TV')+' target verified. Installation remains experimental.')
             root=Path(__file__).resolve().parent
             cache=Path(os.environ.get('LOCALAPPDATA',str(Path.home())))/'Kart64TV'/'runtimes'
-            apk=prepare_android_runtime(abis.stdout.decode(errors='replace'),cache,progress=self.say)
-            node=prepare_tool('node',self.tool_dir,progress=self.say)
+            self.stage('Getting the TV launcher')
+            apk=prepare_android_runtime(abis.stdout.decode(errors='replace'),cache,progress=self.say,transfer_progress=lambda done,total:self.stage('Downloading the TV launcher',done,total))
+            self.stage('Launcher verified')
+            node=self.tool('node')
             with tempfile.TemporaryDirectory(prefix='kart64-android-private-') as tmp:
                 tmp=Path(tmp);archive=Path(game)
+                self.stage('Preparing your game files')
                 if identify_game(archive)=='rom':archive=prepare_rom(archive,tmp,self.say)
                 runtime=tmp/'runtime';runtime.mkdir();self.say('Preparing Android TV game data locally…')
+                self.stage('Downloading and verifying the game runtime')
                 self.command([str(node),str(root/'src'/'build-runtime.cjs'),str(runtime)])
+                self.stage('Packaging your game files')
                 content=create_content_tar(runtime,archive,tmp/'content.tar')
+                self.stage('Installing the TV launcher')
                 self.say('Installing the Android TV app…');self.command([adb,'-s',serial,'install','-r',str(apk)])
                 ready=query(['shell','run-as','com.ticklect.kart64','mkdir','-p','files/web'])
                 if ready.returncode:raise ValueError('Could not open the private Android game folder.')
                 clear=query(['shell','run-as','com.ticklect.kart64','rm','-f','files/web/ready.json'])
                 if clear.returncode:raise ValueError('Could not prepare the Android installation marker.')
+                self.stage('Transferring your game files to the TV')
                 with content.open('rb') as stream:
                     result=subprocess.run([adb,'-s',serial,'exec-in','run-as','com.ticklect.kart64','tar','-x','-f','-','-C','files/web'],stdin=stream,stdout=subprocess.PIPE,stderr=subprocess.PIPE,timeout=300,creationflags=flags)
                 if result.returncode:raise ValueError('Private game-data transfer did not complete.')
+                self.stage('Finalising game installation')
                 marker=query(['shell','run-as','com.ticklect.kart64','touch','files/web/ready.json'])
                 if marker.returncode:raise ValueError('Could not mark Android game data ready.')
             self.say('Android TV app and private game data installed. Open Kart64 TV from the TV apps list; performance and controllers need testing on this device.');self.events.put(('done',True))
         except Exception as e:self.say('Android installation stopped: '+str(e));self.events.put(('done',False))
     def run_webos(self,ip,game,cli_dir,target):
         try:
+            self.stage('Checking LG connection and tools')
             tools={name:Path(cli_dir)/(name+'.cmd') for name in ('ares-package','ares-install','ares-setup-device')}
             if not all(p.is_file() for p in tools.values()):raise ValueError('Select the official webOS CLI bin folder containing ares-package.cmd, ares-install.cmd and ares-setup-device.cmd.')
             flags=subprocess.CREATE_NO_WINDOW if os.name=='nt' else 0
             p=subprocess.run([str(tools['ares-setup-device']),'--listfull'],capture_output=True,text=True,timeout=30,creationflags=flags)
             if p.returncode:raise ValueError('Could not read registered LG devices.')
             verify_webos_target(json.loads(p.stdout),target,ip)
-            node=prepare_tool('node',self.tool_dir,progress=self.say)
+            node=self.tool('node')
             with tempfile.TemporaryDirectory(prefix='kart64-webos-private-') as tmp:
                 tmp=Path(tmp);archive=Path(game)
+                self.stage('Preparing your game files')
                 if identify_game(archive)=='rom':archive=prepare_rom(archive,tmp,self.say)
                 runtime=tmp/'runtime';runtime.mkdir();stage=tmp/'webos';stage.mkdir()
+                self.stage('Downloading and verifying the game runtime')
                 self.say('Preparing the experimental webOS runtime…');self.command([str(node),str(Path(__file__).resolve().parent/'src'/'build-runtime.cjs'),str(runtime)])
+                self.stage('Packaging your game files')
                 prepare_webos_stage(runtime,archive,stage)
                 self.command([str(tools['ares-package']),'--no-minify','--outdir',str(tmp),str(stage)])
                 packages=list(tmp.glob('com.ticklect.kart64_*.ipk'))
                 if len(packages)!=1:raise ValueError('webOS packaging did not produce exactly one app package.')
+                self.stage('Installing on your LG TV')
                 self.say('Installing on the selected registered LG TV…');self.command([str(tools['ares-install']),'--device',target,str(packages[0])])
+                self.stage('Verifying the installed TV app')
                 check=subprocess.run([str(tools['ares-install']),'--device',target,'--list'],capture_output=True,text=True,timeout=30,creationflags=flags)
                 if check.returncode or 'com.ticklect.kart64' not in check.stdout:raise ValueError('Could not verify the installed LG app.')
             self.say('LG app installation verified. Game execution and controller support on this TV still need a real-device test.');self.events.put(('done',True))
@@ -183,12 +198,12 @@ class Studio(QMainWindow):
         side=QVBoxLayout(sidebar);side.setContentsMargins(18,28,18,22);side.setSpacing(8)
         side.addWidget(RaceMark());side.addSpacing(20)
         self.stack=QStackedWidget();self.nav=[]
-        for i,label in enumerate(('Install','Devices','Performance','Activity')):
+        for i,label in enumerate(('Install','Devices','Performance','Activity','TV guide')):
             b=QPushButton(label);b.setObjectName('nav');b.setCheckable(True);b.clicked.connect(lambda checked=False,n=i:self.navigate(n));side.addWidget(b);self.nav.append(b)
-        side.addStretch();self.task_status=text('Ready','muted');side.addWidget(self.task_status);side.addSpacing(8);side.addWidget(text('Version 1.0','muted'))
+        side.addStretch();self.task_status=text('Ready','muted');side.addWidget(self.task_status);side.addSpacing(8);side.addWidget(text('Development preview','muted'))
         outer.addWidget(self.stack,1)
-        self.overview=self.page();self.tv_page=self.page();self.performance=self.page();self.activity=self.page()
-        self.build_overview();self.build_tvs();self.build_performance();self.build_activity();self.update_selection();self.navigate(0)
+        self.overview=self.page();self.tv_page=self.page();self.performance=self.page();self.activity=self.page();self.catalog=self.page()
+        self.build_overview();self.build_tvs();self.build_performance();self.build_activity();self.build_catalog();self.update_selection();self.navigate(0)
         self.timer=QTimer(self);self.timer.timeout.connect(self.poll);self.timer.start(100)
         if start_scan:QTimer.singleShot(300,self.scan)
     def page(self):
@@ -251,8 +266,50 @@ class Studio(QMainWindow):
         self.heading(self.activity,'WHAT IS HAPPENING','Activity','Setup progress and diagnostic messages appear here.')
         self.activity_state=text('Ready','cardTitle');self.activity.addWidget(self.activity_state)
         self.activity_progress=QProgressBar();self.activity_progress.setRange(0,0);self.activity_progress.hide();self.activity.addWidget(self.activity_progress)
+        self.stage_list=QListWidget();self.stage_list.setMaximumHeight(190);self.activity.addWidget(self.stage_list)
+        self.current_stage=None;self.stage_started=0;self.stage_finished=False;self.stage_percent=None
         self.log=QPlainTextEdit();self.log.setReadOnly(True);self.activity.addWidget(self.log,1)
         b=QPushButton('Open official SpaghettiKart releases ↗');b.clicked.connect(lambda:webbrowser.open('https://github.com/HarbourMasters/SpaghettiKart/releases'));self.activity.addWidget(b,alignment=Qt.AlignLeft)
+    def build_catalog(self):
+        self.heading(self.catalog,'','TV guide','Search recorded evidence and experimental installation routes.')
+        self.catalog_search=QLineEdit();self.catalog_search.setPlaceholderText('Search model, brand, operating system or controller')
+        self.catalog.addWidget(self.catalog_search)
+        self.catalog_summary=text('','muted');self.catalog.addWidget(self.catalog_summary)
+        self.catalog_list=QListWidget();self.catalog_list.setWordWrap(True);self.catalog_list.setSpacing(8);self.catalog.addWidget(self.catalog_list,1)
+        self.catalog_rows=json.loads((Path(__file__).resolve().parent/'assets'/'tv-catalog.json').read_text(encoding='utf-8'))
+        self.catalog_search.textChanged.connect(self.refresh_catalog);self.refresh_catalog()
+        self.catalog.addWidget(text('Recorded observations, not predictions. A matching brand or similar model does not establish compatibility. No results are uploaded automatically.','muted'))
+    def refresh_catalog(self):
+        terms=self.catalog_search.text().casefold().split();self.catalog_list.clear()
+        for row in self.catalog_rows:
+            if not all(term in ' '.join(row.values()).casefold() for term in terms):continue
+            value=f"{row['brand']} · {row['model']}\n{row['status']} · {row['os']}\nController: {row['controller']}\nBoot: {row['timing']}\nFPS: not measured\n{row['notes']}"
+            self.catalog_list.addItem(value)
+        count=self.catalog_list.count()
+        self.catalog_summary.setText(f'{count} matching entries · 1 exact TV model race-tested in this guide' if count else 'No matching evidence. This model has not been recorded in the guide.')
+    def show_stage(self,value):
+        label=value['label']
+        if self.current_stage!=label:
+            if self.current_stage and self.stage_list.count():self.stage_list.item(self.stage_list.count()-1).setText('Done · '+self.current_stage)
+            self.current_stage=label;self.stage_started=time.monotonic();self.stage_finished=False
+            self.stage_list.addItem('Working · '+label);self.stage_list.scrollToBottom()
+        done,total=value.get('completed'),value.get('total');self.stage_percent=None
+        if isinstance(total,(int,float)) and total>0 and isinstance(done,(int,float)) and 0<=done<=total:
+            self.stage_percent=int(done*100/total)
+            for bar in (self.progress,self.activity_progress):bar.setRange(0,100);bar.setValue(self.stage_percent)
+        else:
+            for bar in (self.progress,self.activity_progress):bar.setRange(0,0)
+        self.update_stage_time()
+    def update_stage_time(self):
+        if self.current_stage and not self.stage_finished:
+            seconds=int(time.monotonic()-self.stage_started)
+            measured=f' · {self.stage_percent}% of download' if self.stage_percent is not None else ''
+            self.activity_state.setText(f'{self.current_stage}{measured} · {seconds}s')
+    def finish_stages(self,success):
+        if not self.current_stage:return
+        self.stage_finished=True
+        self.stage_list.item(self.stage_list.count()-1).setText(('Done' if success else 'Failed')+' · '+self.current_stage)
+        self.activity_state.setText('Finished' if success else 'Stopped during '+self.current_stage+' — see details below')
     def set_game(self,path):
         self.game=path;self.game_name.setText(Path(path).name if path else 'No game file selected');self.game_info.setText('Selected — file is checked when installation starts.' if path else 'Use your own supported US ROM or compatible archive.');self.update_selection()
     def pick_game(self):
@@ -327,6 +384,8 @@ class Studio(QMainWindow):
         for row in reversed(rows):self.history.addItem(f"{row.get('model','Unknown model')}   •   {row.get('time','')}\nCPU work {row.get('cpu_iterations','—')} / sec   |   Graphics callbacks {row.get('graphics_callbacks','—')} / sec")
     def start_work(self,target,args,show_activity=True):
         if self.busy:return
+        self.current_stage=None;self.stage_list.clear();self.stage_percent=None;self.stage_finished=False
+        for bar in (self.progress,self.activity_progress):bar.setRange(0,0)
         self.busy=True;self.scan_button.setEnabled(False);self.tv_list.setEnabled(False);self.progress.show();self.activity_progress.show();self.activity_state.setText('Working…');self.task_status.setText('●  Working · see Activity');self.update_selection()
         if show_activity:self.navigate(3)
         threading.Thread(target=target,args=args,daemon=True).start()
@@ -350,12 +409,14 @@ class Studio(QMainWindow):
         try:
             while True:
                 kind,value=self.engine.events.get_nowait()
-                if kind=='log':self.log.appendPlainText(str(value))
+                if kind=='stage':self.show_stage(value)
+                elif kind=='log':self.log.appendPlainText(str(value))
                 elif kind=='cli_ready':self.cli=str(value)
                 elif kind=='tvs':self.set_devices(value)
                 elif kind=='history':self.refresh_performance()
-                elif kind=='done':self.busy=False;self.scan_button.setEnabled(True);self.tv_list.setEnabled(True);self.progress.hide();self.activity_progress.hide();self.activity_state.setText('Finished' if value else 'Stopped — see details below');self.task_status.setText('●  Ready' if value else '●  Check Activity');self.update_selection()
+                elif kind=='done':self.finish_stages(value);self.busy=False;self.scan_button.setEnabled(True);self.tv_list.setEnabled(True);self.progress.hide();self.activity_progress.hide();self.activity_state.setText(('Finished' if value else 'Stopped — see details below') if not self.current_stage else self.activity_state.text());self.task_status.setText('●  Ready' if value else '●  Check Activity');self.update_selection()
         except queue.Empty:pass
+        self.update_stage_time()
     def shutdown(self):
         self.timer.stop();self.engine.temp.cleanup();self.hide()
     def closeEvent(self,event):
